@@ -1,12 +1,10 @@
-Here's the documentation for your `HardwareKey` class, inspired by the `Mtf.Serial` documentation format:
-
----
-
 # Mtf.HardwareKey Library Documentation
 
 ## Overview
 
 The `Mtf.HardwareKey` library provides the `HardwareKey` class, designed for interacting with hardware keys for licensing and security. It includes methods for reading and writing data, handling bitwise operations, and checking memory status. This document covers installation, properties, methods, events, and usage examples for integrating with hardware keys in .NET applications.
+
+[Sentinel Superpro Client Library v7.1.0.19](https://supportportal.thalesgroup.com/csm?id=kb_article_view&sysparm_article=KB0025067)
 
 ## Installation
 
@@ -126,7 +124,3 @@ public class HardwareKeyExample
 - **Exception Handling**: Ensure exception handling for errors during API communication and hardware access.
 - **Dispose**: Always dispose of the `HardwareKey` instance to free up resources.
 - **Bitwise Operations**: Use bitwise methods to manipulate specific bits if required by your application logic.
-
---- 
-
-Let me know if you’d like additional examples or details on any specific method.

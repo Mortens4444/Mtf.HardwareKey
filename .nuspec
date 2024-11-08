@@ -18,7 +18,7 @@
 	<license type="expression">MIT</license>
 	<projectUrl>https://github.com/Mortens4444/Mtf.HardwareKey</projectUrl>
     <repository type="git" url="https://github.com/Mortens4444/Mtf.HardwareKey.git" branch="main" commit="ad7dd48a050b4aa75ed7fffd51880f4323d2a7c3" />
-	<tags>Sentinel SuperPro Harware Key</tags>
+	<tags>Sentinel SuperPro Harware Key Mortens</tags>
 	<readme>docs\ReadMe.md</readme>
     <dependencies>
       <group targetFramework="netstandard2.0" />
