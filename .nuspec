@@ -10,28 +10,22 @@
       - Sentinel SuperPro Harware Key
       
       Compatibility:
-      - .NET Framework 4.8.1
-      - .NET 8
-      - .NET 9
+      - .netstandard2.0
 	</description>
     <authors>Mortens</authors>
 	<owners>Mortens</owners>
     <copyright>Copyright © 2024</copyright>
 	<license type="expression">MIT</license>
 	<projectUrl>https://github.com/Mortens4444/Mtf.HardwareKey</projectUrl>
-    <repository type="git" url="https://github.com/Mortens4444/Mtf.HardwareKey.git" branch="main" commit="00000000000000000000000000000000000000" />
+    <repository type="git" url="https://github.com/Mortens4444/Mtf.HardwareKey.git" branch="main" commit="ad7dd48a050b4aa75ed7fffd51880f4323d2a7c3" />
 	<tags>Sentinel SuperPro Harware Key</tags>
 	<readme>docs\ReadMe.md</readme>
     <dependencies>
-      <group targetFramework="net481" />
-      <group targetFramework="net8.0-windows7" />
-      <group targetFramework="net9.0-windows7" />
+      <group targetFramework="netstandard2.0" />
     </dependencies>
   </metadata>
   <files>
-    <file src=".\Mtf.HardwareKey\bin\Release\net481\**" target="lib\net481" />
-    <file src=".\Mtf.HardwareKey\bin\Release\net8.0-windows\**" target="lib\net8.0-windows7" />
-    <file src=".\Mtf.HardwareKey\bin\Release\net9.0-windows\**" target="lib\net9.0-windows7" />
+    <file src=".\Mtf.HardwareKey\bin\Release\netstandard2.0\**" target="lib\netstandard2.0" />
 	<file src=".\ReadMe.md" target="docs\" />
   </files>
 </package>
