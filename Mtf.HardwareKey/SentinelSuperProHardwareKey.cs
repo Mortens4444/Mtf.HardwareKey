@@ -19,13 +19,13 @@ namespace Mtf.HardwareKey
         /// </summary>
         public ushort SentinelSerial { get; private set; }
 
-        protected SentinelSuperProHardwareKey(ushort hardwareKeyIndex)
-            : this(HardwareKeyDeveloper.Test1, hardwareKeyIndex, String.Empty)
+        protected SentinelSuperProHardwareKey(ushort hardwareKeyIndex, bool autoSelect)
+            : this(HardwareKeyDeveloper.Test1, hardwareKeyIndex, null, autoSelect)
         {
         }
 
-        public SentinelSuperProHardwareKey(HardwareKeyDeveloper developerId, ushort hardwareKeyIndex, string contactServer)
-            : base(developerId, hardwareKeyIndex, contactServer)
+        public SentinelSuperProHardwareKey(HardwareKeyDeveloper developerId, ushort hardwareKeyIndex, string contactServer, bool autoSelect)
+            : base(developerId, hardwareKeyIndex, contactServer, autoSelect)
         {
             licenseMaintainer = new Timer(TimeSpan.FromSeconds(55).TotalMilliseconds)
             {

@@ -37,4 +37,10 @@
     <WarningLevel>9999</WarningLevel>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Update="sx32w.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

@@ -1,14 +1,19 @@
-﻿//#define USE_PRIMITIVE_TYPES
-
-using Mtf.HardwareKey.Enums;
+﻿using Mtf.HardwareKey.Enums;
 using Mtf.HardwareKey.Models;
+using Mtf.HardwareKey.Services;
+using Mtf.HardwareKey.Structs;
 using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace Mtf.HardwareKey
 {
     internal class SentinelAPI
     {
+        [DllImport("sx32w.dll")]
+        [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
+        private static extern ushort RNBOsproActivate(ulong[] thePacket, ushort writePassword, ushort activatePassword1, ushort activatePassword2, ushort address);
+
         /// <summary>
         /// This function activates an inactive algorithm at the specified cell address.
         /// You can call this function anytime after obtaining a license.
@@ -19,21 +24,30 @@ namespace Mtf.HardwareKey
         /// <param name="activate_password_2">The second word of the activation password.</param>
         /// <param name="address">The address of the first word of an inactive algorithm.</param>
         /// <returns>Returns a SentinelStatusCode.</returns>
+        public static SentinelStatusCode Activate(ulong[] thePacket, ushort writePassword, ushort activatePassword1, ushort activatePassword2, MemoryAddress address,
+            [CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerFunctionName = "", [CallerLineNumber] int callerFunctionLine = 0)
+        {
+            var status = RNBOsproActivate(thePacket, writePassword, activatePassword1, activatePassword2, (ushort)address);
+            StatusCodeChecker.CheckForError(status, callerFilePath, callerFunctionName, callerFunctionLine);
+            return status;
+        }
+
         [DllImport("sx32w.dll")]
-        [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
-#if USE_PRIMITIVE_TYPES
-        public static extern ushort RNBOsproActivate(ulong[] thePacket, ushort writePassword, ushort activatePassword1, ushort activatePassword2, ushort address);
-#else
-        public static extern SentinelStatusCode RNBOsproActivate(ulong[] thePacket, ushort writePassword, ushort activate_password_1, ushort activate_password_2, MemoryAddress address);
-#endif
+        [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
+        private static extern void RNBOsproCleanup();
 
         /// <summary>
         /// This function releases the memory resources acquired by the SuperPro client library.
         /// You can call this function immediately after calling RNBOsproReleaseLicense.
         /// </summary>
+        public static void Cleanup()
+        {
+            RNBOsproCleanup();
+        }
+
         [DllImport("sx32w.dll")]
-        [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
-        public static extern void RNBOsproCleanup();
+        [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
+        private static extern ushort RNBOsproDecrement(ulong[] thePacket, ushort writePassword, MemoryAddress address);
 
         /// <summary>
         /// This function is used to decrement a counter word by one.
@@ -43,9 +57,17 @@ namespace Mtf.HardwareKey
         /// <param name="writePassword">The write password for the SuperPro key.</param>
         /// <param name="address">The address of the counter to decrement.</param>
         /// <returns>Returns a SentinelStatusCode.</returns>
+        public static SentinelStatusCode Decrement(ulong[] thePacket, ushort writePassword, MemoryAddress address,
+            [CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerFunctionName = "", [CallerLineNumber] int callerFunctionLine = 0)
+        {
+            var status = RNBOsproDecrement(thePacket, writePassword, (ushort)address);
+            StatusCodeChecker.CheckForError(status, callerFilePath, callerFunctionName, callerFunctionLine);
+            return status;
+        }
+
         [DllImport("sx32w.dll")]
-        [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
-        public static extern SentinelStatusCode RNBOsproDecrement(ulong[] thePacket, ushort writePassword, MemoryAddress address);
+        [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
+        private static extern ushort RNBOsproEnumServer(EnumServer enumFlag, ushort developerId, NSPRO_SERVER_INFO[] serverInfo, ref ushort numberOfSentinelProtectionServerFound);
 
         /// <summary>
         /// This function enumerates the number of Sentinel Protection Servers running in the subnet for the developer ID specified.
@@ -55,10 +77,25 @@ namespace Mtf.HardwareKey
         /// <param name="serverInfo">A pointer to a buffer that will contain the Sentinel Protection Server information, such as the system address and the number of licenses available. A developer needs to allocate memory for the buffer.</param>
         /// <param name="numberOfSentinelProtectionServerFound">A pointer to a variable that contains the desired number of the Sentinel Protection Servers. When the function returns, this variable contains the actual number of Sentinel Protection Servers found running on the network.</param>
         /// <returns>Returns a SentinelStatusCode.</returns>
+        public static SentinelStatusCode EnumServer(EnumServer enumFlag, HardwareKeyDeveloper developerId, NSPRO_SERVER_INFO[] serverInfo, ref ushort numberOfSentinelProtectionServerFound,
+            [CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerFunctionName = "", [CallerLineNumber] int callerFunctionLine = 0)
+        {
+            var status = RNBOsproEnumServer(enumFlag, (ushort)developerId, serverInfo, ref numberOfSentinelProtectionServerFound);
+            StatusCodeChecker.CheckForError(status, callerFilePath, callerFunctionName, callerFunctionLine);
+            return status;
+        }
+
+        public static SentinelStatusCode EnumServer(EnumServer enumFlag, NSPRO_SERVER_INFO[] serverInfo, ref ushort numberOfSentinelProtectionServerFound,
+            [CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerFunctionName = "", [CallerLineNumber] int callerFunctionLine = 0)
+        {
+            var status = RNBOsproEnumServer(enumFlag, 0xFFFF, serverInfo, ref numberOfSentinelProtectionServerFound);
+            StatusCodeChecker.CheckForError(status, callerFilePath, callerFunctionName, callerFunctionLine);
+            return status;
+        }
+
         [DllImport("sx32w.dll")]
-        [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
-        public static extern SentinelStatusCode RNBOsproEnumServer(EnumServer enumFlag, ushort developerId, byte[] serverInfo, ref ushort numberOfSentinelProtectionServerFound);
-        //public static extern SentinelStatusCode RNBOsproEnumServer(ENUM_SERVER_FLAG enumFlag, ushort developerId, ref NSPRO_serverInfo[] serverInfo, ushort numberOfSentinelProtectionServerFound);
+        [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
+        private static extern ushort RNBOsproExtendedRead(ulong[] thePacket, MemoryAddress address, out ushort data, out SentinelSuperProAccessCode accessCode);
 
         /// <summary>
         /// This function reads the word and access code at the specified address. On success, the data variable contains the information from the SuperPro key and the access code variable contains the access code.
@@ -68,9 +105,17 @@ namespace Mtf.HardwareKey
         /// <param name="data">A pointer to the variable that will contain the data read from the key.</param>
         /// <param name="accessCode">A pointer to the variable that will contain the access code associated with the word that was read.</param>
         /// <returns>Returns a SentinelStatusCode.</returns>
+        public static SentinelStatusCode ExtendedRead(ulong[] thePacket, MemoryAddress address, out ushort data, out SentinelSuperProAccessCode accessCode,
+            [CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerFunctionName = "", [CallerLineNumber] int callerFunctionLine = 0)
+        {
+            var status = RNBOsproExtendedRead(thePacket, (ushort)address, out data, out accessCode);
+            StatusCodeChecker.CheckForError(status, callerFilePath, callerFunctionName, callerFunctionLine);
+            return status;
+        }
+
         [DllImport("sx32w.dll")]
-        [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
-        public static extern SentinelStatusCode RNBOsproExtendedRead(ulong[] thePacket, MemoryAddress address, out ushort data, out SentinelSuperProAccessCode accessCode);
+        [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
+        private static extern ushort RNBOsproFindFirstUnit(ulong[] thePacket, HardwareKeyDeveloper developerId);
 
         /// <summary>
         /// This function finds the first SuperPro key with the specified developer ID and obtains a license, if available.
@@ -79,9 +124,18 @@ namespace Mtf.HardwareKey
         /// <param name="thePacket">A pointer to the API packet.</param>
         /// <param name="developerId">The developer ID of the SuperPro key to find.</param>
         /// <returns>Returns a SentinelStatusCode.</returns>
+        public static SentinelStatusCode FindFirstUnit(ulong[] thePacket, HardwareKeyDeveloper developerId,
+            [CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerFunctionName = "", [CallerLineNumber] int callerFunctionLine = 0)
+        {
+            // Connects to Internet?
+            var status = RNBOsproFindFirstUnit(thePacket, (ushort)developerId);
+            StatusCodeChecker.CheckForError(status, callerFilePath, callerFunctionName, callerFunctionLine);
+            return status;
+        }
+
         [DllImport("sx32w.dll")]
-        [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
-        public static extern SentinelStatusCode RNBOsproFindFirstUnit(ulong[] thePacket, HardwareKeyDeveloper developerId);
+        [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
+        private static extern ushort RNBOsproFindFirstUnit(ulong[] thePacket, ushort developerId);
 
         /// <summary>
         /// This function finds the first SuperPro key with the specified developer ID and obtains a license, if available.
@@ -90,9 +144,17 @@ namespace Mtf.HardwareKey
         /// <param name="thePacket">A pointer to the API packet.</param>
         /// <param name="developerId">The developer ID of the SuperPro key to find.</param>
         /// <returns>Returns a SentinelStatusCode.</returns>
+        public static ushort FindFirstUnit(ulong[] thePacket, ushort developerId,
+            [CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerFunctionName = "", [CallerLineNumber] int callerFunctionLine = 0)
+        {
+            var status = RNBOsproFindFirstUnit(thePacket, developerId);
+            StatusCodeChecker.CheckForError(status, callerFilePath, callerFunctionName, callerFunctionLine);
+            return status;
+        }
+
         [DllImport("sx32w.dll")]
-        [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
-        public static extern ushort RNBOsproFindFirstUnit(ulong[] thePacket, ushort developerId);
+        [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
+        private static extern ushort RNBOsproFindNextUnit(ulong[] thePacket);
 
         /// <summary>
         /// This API finds the next SuperPro key based on the developer ID maintained in the RB_SPRO_APIPACKET structure.
@@ -103,13 +165,17 @@ namespace Mtf.HardwareKey
         /// </summary>
         /// <param name="thePacket">A pointer to the API packet.</param>
         /// <returns>Returns a SentinelStatusCode.</returns>
+        public static SentinelStatusCode FindNextUnit(ulong[] thePacket,
+            [CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerFunctionName = "", [CallerLineNumber] int callerFunctionLine = 0)
+        {
+            var status = RNBOsproFindNextUnit(thePacket);
+            StatusCodeChecker.CheckForError(status, callerFilePath, callerFunctionName, callerFunctionLine);
+            return status;
+        }
+
         [DllImport("sx32w.dll")]
-        [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
-#if USE_PRIMITIVE_TYPES
-        public static extern ushort RNBOsproFindNextUnit(ulong[] thePacket);
-#else
-        public static extern SentinelStatusCode RNBOsproFindNextUnit(ulong[] thePacket);
-#endif
+        [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
+        private static extern ushort RNBOsproFormatPacket(ulong[] thePacket, ushort packetSize);
 
         /// <summary>
         /// This function initializes and validates the API packet based on its size.
@@ -117,13 +183,18 @@ namespace Mtf.HardwareKey
         /// <param name="thePacket">A pointer to the API packet.</param>
         /// <param name="packetSize">The size of the RB_SPRO_APIPACKET structure.</param>
         /// <returns>Returns a SentinelStatusCode.</returns>
-        [DllImport("sx32w.dll")]
-        [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
-#if USE_PRIMITIVE_TYPES
-        public static extern ushort RNBOsproFormatPacket(ulong[] thePacket, ushort packetSize);
-#else
-        public static extern SentinelStatusCode RNBOsproFormatPacket(ulong[] thePacket, ushort packetSize);
-#endif
+        public static SentinelStatusCode FormatPacket(ulong[] thePacket, ushort packetSize,
+            [CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerFunctionName = "", [CallerLineNumber] int callerFunctionLine = 0)
+        {
+            var status = RNBOsproFormatPacket(thePacket, packetSize);
+            StatusCodeChecker.CheckForError(status, callerFilePath, callerFunctionName, callerFunctionLine);
+            return status;
+        }
+
+        [DllImport("sx32w.dll", CharSet = CharSet.Unicode)]
+        [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
+        //private static extern SentinelStatusCode RNBOsproGetContactServer(ulong[] thePacket, StringBuilder serverName, ushort serverNameLength);
+        private static extern ushort RNBOsproGetContactServer(ulong[] thePacket, char[] serverName, ushort serverNameLength);
 
         /// <summary>
         /// This function returns the access mode set to obtain a license.
@@ -132,19 +203,34 @@ namespace Mtf.HardwareKey
         /// <param name="serverName">A pointer to the buffer in which the Sentinel Protection Server name is copied. Memory needs to be allocated for the buffer.</param>
         /// <param name="serverNameLength">The length of the buffer. The maximum length recommended is 64 bytes.</param>
         /// <returns>Returns a SentinelStatusCode.</returns>
-        [DllImport("sx32w.dll", CharSet = CharSet.Unicode)]
-        [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
-        //public static extern SentinelStatusCode RNBOsproGetContactServer(ulong[] thePacket, StringBuilder serverName, ushort serverNameLength);
-        public static extern SentinelStatusCode RNBOsproGetContactServer(ulong[] thePacket, char[] serverName, ushort serverNameLength);
+        public static SentinelStatusCode GetContactServer(ulong[] thePacket, char[] serverName, ushort serverNameLength,
+            [CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerFunctionName = "", [CallerLineNumber] int callerFunctionLine = 0)
+        {
+            var status = RNBOsproGetContactServer(thePacket, serverName, serverNameLength);
+            StatusCodeChecker.CheckForError(status, callerFilePath, callerFunctionName, callerFunctionLine);
+            return status;
+        }
+
+        [DllImport("sx32w.dll")]
+        [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
+        private static extern ushort RNBOsproGetFullStatus(ulong[] thePacket);
 
         /// <summary>
         /// This function obtains the return code of the last-called API function.
         /// </summary>
         /// <param name="thePacket">A pointer to the API packet.</param>
         /// <returns>Returns a SentinelStatusCode.</returns>
+        public static SentinelStatusCode GetFullStatus(ulong[] thePacket,
+            [CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerFunctionName = "", [CallerLineNumber] int callerFunctionLine = 0)
+        {
+            var status = RNBOsproGetFullStatus(thePacket);
+            StatusCodeChecker.CheckForError(status, callerFilePath, callerFunctionName, callerFunctionLine);
+            return status;
+        }
+
         [DllImport("sx32w.dll")]
-        [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
-        public static extern SentinelStatusCode RNBOsproGetFullStatus(ulong[] thePacket);
+        [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
+        private static extern ushort RNBOsproGetHardLimit(ulong[] thePacket, out ushort hardLimit);
 
         /// <summary>
         /// This function retrieves the hard limit of the key from which the license was obtained.
@@ -152,9 +238,19 @@ namespace Mtf.HardwareKey
         /// <param name="thePacket">A pointer to the API packet.</param>
         /// <param name="hardLimit">A pointer to the location that holds the hard limit of the key. It defines the maximum number of licenses that can be issued by this key.</param>
         /// <returns>Returns a SentinelStatusCode.</returns>
+        public static SentinelStatusCode GetHardLimit(ulong[] thePacket, out ushort hardLimit,
+            [CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerFunctionName = "", [CallerLineNumber] int callerFunctionLine = 0)
+        {
+            var status = RNBOsproGetHardLimit(thePacket, out hardLimit);
+            StatusCodeChecker.CheckForError(status, callerFilePath, callerFunctionName, callerFunctionLine);
+            return status;
+        }
+
+        [Obsolete]
         [DllImport("sx32w.dll")]
-        [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
-        public static extern SentinelStatusCode RNBOsproGetHardLimit(ulong[] thePacket, out ushort hardLimit);
+        [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
+        //private static extern ushort RNBOsproGetKeyInfo(ulong[] thePacket, ushort devId, ushort keyIndex, ref NSPRO_monitorInfo nsproMonitorInfo);
+        private static extern ushort RNBOsproGetKeyInfo(ulong[] thePacket, HardwareKeyDeveloper developerId, ushort keyIndex, ref byte[] monitorInfo);
 
         /// <summary>
         /// This function retrieves the following information about the key attached on a stand-alone system or a network computer
@@ -165,11 +261,18 @@ namespace Mtf.HardwareKey
         /// <param name="monitorInfo">A pointer to the nsproMonitorInfo structure. This structure has various fields that contain information about the key. Refer to spromeps.h for details.</param>
         /// <returns>Returns a SentinelStatusCode.</returns>
         [Obsolete]
+        public static SentinelStatusCode GetKeyInfo(ulong[] thePacket, HardwareKeyDeveloper developerId, ushort keyIndex, ref byte[] monitorInfo,
+            [CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerFunctionName = "", [CallerLineNumber] int callerFunctionLine = 0)
+        {
+            var status = RNBOsproGetKeyInfo(thePacket, (ushort)developerId, keyIndex, ref monitorInfo);
+            StatusCodeChecker.CheckForError(status, callerFilePath, callerFunctionName, callerFunctionLine);
+            return status;
+        }
+        //private static extern SentinelStatusCode RNBOsproGetKeyInfo(ulong[] thePacket, HardwareKeyType developerId, ushort keyIndex, ref NSPRO_monitorInfo monitorInfo);
+
         [DllImport("sx32w.dll")]
-        [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
-        //public static extern ushort RNBOsproGetKeyInfo(ulong[] thePacket, ushort devId, ushort keyIndex, ref NSPRO_monitorInfo nsproMonitorInfo);
-        public static extern SentinelStatusCode RNBOsproGetKeyInfo(ulong[] thePacket, HardwareKeyDeveloper developerId, ushort keyIndex, ref byte[] monitorInfo);
-        //public static extern SentinelStatusCode RNBOsproGetKeyInfo(ulong[] thePacket, HardwareKeyType developerId, ushort keyIndex, ref NSPRO_monitorInfo monitorInfo);
+        [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
+        private static extern ushort RNBOsproGetKeyType(ulong[] thePacket, out KeyFamily keyFamily, out KeyFormFactor keyFormFactor, out ushort keyMemorySize);
 
         /// <summary>
         /// This function returns the following information about the key attached to a system:
@@ -179,9 +282,17 @@ namespace Mtf.HardwareKey
         /// <param name="keyFormFactor">The form factor parameter will return 0 or 1, where 0 denotes the parallel keys and 1 denotes the USB keys.</param>
         /// <param name="keyMemorySize">The number of cells (inclusive of the reserved cells).</param>
         /// <returns>Returns a SentinelStatusCode.</returns>
+        public static SentinelStatusCode GetKeyType(ulong[] thePacket, out KeyFamily keyFamily, out KeyFormFactor keyFormFactor, out ushort keyMemorySize,
+            [CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerFunctionName = "", [CallerLineNumber] int callerFunctionLine = 0)
+        {
+            var status = RNBOsproGetKeyType(thePacket, out keyFamily, out keyFormFactor, out keyMemorySize);
+            StatusCodeChecker.CheckForError(status, callerFilePath, callerFunctionName, callerFunctionLine);
+            return status;
+        }
+
         [DllImport("sx32w.dll")]
-        [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
-        public static extern SentinelStatusCode RNBOsproGetKeyType(ulong[] thePacket, out KeyFamily keyFamily, out KeyFormFactor keyFormFactor, out ushort keyMemorySize);
+        [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
+        private static extern ushort RNBOsproGetSubLicense(ulong[] thePacket, MemoryAddress address);
 
         /// <summary>
         /// This function obtains a sublicense from a locked data word (has an access code 1). You can call the RNBOsproGetSubLicense function only after calling the RNBOsproFindFirstUnit function.
@@ -190,9 +301,17 @@ namespace Mtf.HardwareKey
         /// <param name="thePacket">A pointer to the API packet.</param>
         /// <param name="address">The cell address of a locked data word from which the sublicense will be obtained.</param>
         /// <returns>Returns a SentinelStatusCode.</returns>
+        public static SentinelStatusCode GetSubLicense(ulong[] thePacket, MemoryAddress address,
+            [CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerFunctionName = "", [CallerLineNumber] int callerFunctionLine = 0)
+        {
+            var status = RNBOsproGetSubLicense(thePacket, (ushort)address);
+            StatusCodeChecker.CheckForError(status, callerFilePath, callerFunctionName, callerFunctionLine);
+            return status;
+        }
+
         [DllImport("sx32w.dll")]
-        [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
-        public static extern SentinelStatusCode RNBOsproGetSubLicense(ulong[] thePacket, MemoryAddress address);
+        [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
+        private static extern ushort RNBOsproGetVersion(ulong[] thePacket, out byte majorVersion, out byte minorVersion, out byte revision, out OperatingSystemDriverType osDriverType);
 
         /// <summary>
         /// This function returns the Sentinel system driver's version and type.
@@ -203,22 +322,34 @@ namespace Mtf.HardwareKey
         /// <param name="revision">A pointer to the location for the revision number returned.</param>
         /// <param name="osDriverType">A pointer to the location where the operating system driver type information is stored.</param>
         /// <returns>Returns a SentinelStatusCode.</returns>
+        public static SentinelStatusCode GetVersion(ulong[] thePacket, out byte majorVersion, out byte minorVersion, out byte revision, out OperatingSystemDriverType osDriverType,
+            [CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerFunctionName = "", [CallerLineNumber] int callerFunctionLine = 0)
+        {
+            var status = RNBOsproGetVersion(thePacket, out majorVersion, out minorVersion, out revision, out osDriverType);
+            StatusCodeChecker.CheckForError(status, callerFilePath, callerFunctionName, callerFunctionLine);
+            return status;
+        }
+
         [DllImport("sx32w.dll")]
-        [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
-        public static extern SentinelStatusCode RNBOsproGetVersion(ulong[] thePacket, out byte majorVersion, out byte minorVersion, out byte revision, out OperatingSystemDriverType osDriverType);
+        [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
+        private static extern ushort RNBOsproInitialize(ulong[] thePacket);
 
         /// <summary>
         /// This function initializes the API packet and sets the values specified (if any) in the configuration file or the NSP_HOST environment variable.
         /// </summary>
         /// <param name="thePacket">A pointer to the API packet.</param>
         /// <returns>Returns a SentinelStatusCode.</returns>
+        public static SentinelStatusCode Initialize(ulong[] thePacket,
+            [CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerFunctionName = "", [CallerLineNumber] int callerFunctionLine = 0)
+        {
+            var status = RNBOsproInitialize(thePacket);
+            StatusCodeChecker.CheckForError(status, callerFilePath, callerFunctionName, callerFunctionLine);
+            return status;
+        }
+
         [DllImport("sx32w.dll")]
-        [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
-#if USE_PRIMITIVE_TYPES
-        public static extern ushort RNBOsproInitialize(ulong[] thePacket);
-#else
-        public static extern SentinelStatusCode RNBOsproInitialize(ulong[] thePacket);
-#endif
+        [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
+        private static extern ushort RNBOsproOverwrite(ulong[] thePacket, ushort writePassword, ushort overwritePassword1, ushort overwritePassword2, MemoryAddress address, ushort data, SentinelSuperProAccessCode accessCode);
 
         /// <summary>
         /// This function is used to change the value and access code of a word at the specified address.
@@ -232,9 +363,18 @@ namespace Mtf.HardwareKey
         /// <param name="data">Contains the word to write in the key.</param>
         /// <param name="accessCode">Contains the access code associated with the word to write.</param>
         /// <returns>Returns a SentinelStatusCode.</returns>
+        public static SentinelStatusCode Overwrite(ulong[] thePacket, ushort writePassword, ushort overwritePassword1, ushort overwritePassword2, MemoryAddress address, ushort data, SentinelSuperProAccessCode accessCode,
+            [CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerFunctionName = "", [CallerLineNumber] int callerFunctionLine = 0)
+        {
+            var status = RNBOsproOverwrite(thePacket, writePassword, overwritePassword1, overwritePassword2, (ushort)address, data, accessCode);
+            StatusCodeChecker.CheckForError(status, callerFilePath, callerFunctionName, callerFunctionLine);
+            return status;
+        }
+
         [DllImport("sx32w.dll")]
-        [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
-        public static extern SentinelStatusCode RNBOsproOverwrite(ulong[] thePacket, ushort writePassword, ushort overwritePassword1, ushort overwritePassword2, MemoryAddress address, ushort data, SentinelSuperProAccessCode accessCode);
+        [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
+        //private static extern SentinelStatusCode RNBOsproQuery(ulong[] thePacket, ushort address, byte[] queryData, out byte[] response, out ulong[] response32, ushort length);
+        private static extern ushort RNBOsproQuery(ulong[] thePacket, ushort address, byte[] queryData, byte[] response, ulong[] response32, ushort length);
 
         /// <summary>
         /// This function is used to query an algorithm at the specified address. The query data pointer will point to the first byte of the data to be passed to
@@ -249,14 +389,17 @@ namespace Mtf.HardwareKey
         /// <param name="response32">The pointer to the location that will contain a copy of the last four bytes of the query response.</param>
         /// <param name="length">This is the number of  query bytes to send to the active algorithm and also the length of the response buffer.</param>
         /// <returns>Returns a SentinelStatusCode.</returns>
+        public static SentinelStatusCode Query(ulong[] thePacket, MemoryAddress address, byte[] queryData, byte[] response, ulong[] response32, ushort length,
+            [CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerFunctionName = "", [CallerLineNumber] int callerFunctionLine = 0)
+        {
+            var status = RNBOsproQuery(thePacket, address, queryData, response, response32, length);
+            StatusCodeChecker.CheckForError(status, callerFilePath, callerFunctionName, callerFunctionLine);
+            return status;
+        }
+
         [DllImport("sx32w.dll")]
-        [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
-        //public static extern SentinelStatusCode RNBOsproQuery(ulong[] thePacket, ushort address, byte[] queryData, out byte[] response, out ulong[] response32, ushort length);
-#if USE_PRIMITIVE_TYPES
-        public static extern ushort RNBOsproQuery(ulong[] thePacket, ushort address, byte[] queryData, byte[] response, ulong[] response32, ushort length);
-#else
-        public static extern SentinelStatusCode RNBOsproQuery(ulong[] thePacket, MemoryAddress address, byte[] queryData, byte[] response, ulong[] response32, ushort length);
-#endif
+        [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
+        private static extern ushort RNBOsproRead(ulong[] thePacket, ushort address, out ushort data);
 
         /// <summary>
         /// This function reads a word at the specified address. If successful, the data variable will contain the word value.
@@ -265,58 +408,83 @@ namespace Mtf.HardwareKey
         /// <param name="address">The cell address to be read.</param>
         /// <param name="data">A pointer to the variable that will contain the data read from the key.</param>
         /// <returns>Returns a SentinelStatusCode.</returns>
-        [DllImport("sx32w.dll")]
-        [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
-#if USE_PRIMITIVE_TYPES
-        public static extern ushort RNBOsproRead(ulong[] thePacket, ushort address, out ushort data);
-#else
-        public static extern SentinelStatusCode RNBOsproRead(ulong[] thePacket, MemoryAddress address, out ushort data);
-#endif
-
-        /// <summary>
-        /// This function can be used to either release a license or sublicense(s).
-        /// You can call this function anytime after obtaining a license; followed by RNBOsproCleanUp.
-        /// You can call this function before your application terminates. For example, the handler of the exit command button in your user interface can make use of this function.
-        /// We recommend you to use this function in order to release the idle licenses for other clients in queue. This function is especially useful in cases where you have set the heartbeat interval as infinite. The Sentinel Protection Server will not release the license unless you call this function.
-        /// </summary>
-        /// <param name="thePacket">A pointer to the API packet.</param>
-        /// <param name="address">Specify zero to release the main license. Else, specify the cell address to release the sublicense from a particular cell.</param>
-        /// <param name="numberOfSublicensesToBeRelease">The pointer to the variable containing the number of sublicenses to be released. If the main license is to be released, this can be specified as null.</param>
-        /// <returns>Returns a SentinelStatusCode.</returns>
-        [DllImport("sx32w.dll")]
-        [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
-#if USE_PRIMITIVE_TYPES
-        public static extern ushort RNBOsproReleaseLicense(ulong[] thePacket, ushort address, ushort[] numSubLic);
-#else
-        public static extern SentinelStatusCode RNBOsproReleaseLicense(ulong[] thePacket, MemoryAddress address, ushort[] numberOfSublicensesToBeRelease);
-#endif
-
-        /// <summary>
-        /// This function can be used to either release a license or sublicense(s).
-        /// You can call this function anytime after obtaining a license; followed by RNBOsproCleanUp.
-        /// You can call this function before your application terminates. For example, the handler of the exit command button in your user interface can make use of this function.
-        /// We recommend you to use this function in order to release the idle licenses for other clients in queue. This function is especially useful in cases where you have set the heartbeat interval as infinite. The Sentinel Protection Server will not release the license unless you call this function.
-        /// </summary>
-        /// <param name="thePacket">A pointer to the API packet.</param>
-        /// <param name="address">Specify zero to release the main license. Else, specify the cell address to release the sublicense from a particular cell.</param>
-        /// <param name="numberOfSublicensesToBeRelease">The pointer to the variable containing the number of sublicenses to be released. If the main license is to be released, this can be specified as null.</param>
-        /// <returns>Returns a SentinelStatusCode.</returns>
-        [DllImport("sx32w.dll", EntryPoint = "RNBOsproReleaseLicense")]
-        [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
-        private static extern SentinelStatusCode RNBOsproReleaseMainLicense(ulong[] thePacket, MemoryAddress address, ushort[] numberOfSublicensesToBeRelease);
-
-        /// <summary>
-        /// This function can be used to either release a license or sublicense(s).
-        /// You can call this function anytime after obtaining a license; followed by RNBOsproCleanUp.
-        /// You can call this function before your application terminates. For example, the handler of the exit command button in your user interface can make use of this function.
-        /// We recommend you to use this function in order to release the idle licenses for other clients in queue. This function is especially useful in cases where you have set the heartbeat interval as infinite. The Sentinel Protection Server will not release the license unless you call this function.
-        /// </summary>
-        /// <param name="thePacket">A pointer to the API packet.</param>
-        /// <returns>Returns a SentinelStatusCode.</returns>
-        public static SentinelStatusCode RNBOsproReleaseMainLicense(ulong[] thePacket)
+        public static SentinelStatusCode Read(ulong[] thePacket, MemoryAddress address, out ushort data,
+            [CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerFunctionName = "", [CallerLineNumber] int callerFunctionLine = 0)
         {
-            return RNBOsproReleaseMainLicense(thePacket, MemoryAddress.SafeNet_KeySerialNumber, null);
+            var status = RNBOsproRead(thePacket, (ushort)address, out data);
+            StatusCodeChecker.CheckForError(status, callerFilePath, callerFunctionName, callerFunctionLine);
+            return status;
         }
+
+        public static bool CanRead(ulong[] thePacket, MemoryAddress address)
+        {
+            var status = RNBOsproRead(thePacket, (ushort)address, out _);
+            return status == SentinelStatusCode.Success;
+        }
+
+        [DllImport("sx32w.dll")]
+        [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
+        private static extern ushort RNBOsproReleaseLicense(ulong[] thePacket, ushort address, ushort[] numberOfSublicensesToBeRelease);
+
+        /// <summary>
+        /// This function can be used to either release a license or sublicense(s).
+        /// You can call this function anytime after obtaining a license; followed by RNBOsproCleanUp.
+        /// You can call this function before your application terminates. For example, the handler of the exit command button in your user interface can make use of this function.
+        /// We recommend you to use this function in order to release the idle licenses for other clients in queue. This function is especially useful in cases where you have set the heartbeat interval as infinite. The Sentinel Protection Server will not release the license unless you call this function.
+        /// </summary>
+        /// <param name="thePacket">A pointer to the API packet.</param>
+        /// <param name="address">Specify zero to release the main license. Else, specify the cell address to release the sublicense from a particular cell.</param>
+        /// <param name="numberOfSublicensesToBeRelease">The pointer to the variable containing the number of sublicenses to be released. If the main license is to be released, this can be specified as null.</param>
+        /// <returns>Returns a SentinelStatusCode.</returns>
+        public static SentinelStatusCode ReleaseLicense(ulong[] thePacket, MemoryAddress address, ushort[] numberOfSublicensesToBeRelease,
+            [CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerFunctionName = "", [CallerLineNumber] int callerFunctionLine = 0)
+        {
+            var status = RNBOsproReleaseLicense(thePacket, (ushort)address, numberOfSublicensesToBeRelease);
+            StatusCodeChecker.CheckForError(status, callerFilePath, callerFunctionName, callerFunctionLine);
+            return status;
+        }
+
+        [DllImport("sx32w.dll", EntryPoint = "RNBOsproReleaseLicense")]
+        [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
+        private static extern ushort RNBOsproReleaseMainLicense(ulong[] thePacket, ushort address, ushort[] numberOfSublicensesToBeRelease);
+
+        /// <summary>
+        /// This function can be used to either release a license or sublicense(s).
+        /// You can call this function anytime after obtaining a license; followed by RNBOsproCleanUp.
+        /// You can call this function before your application terminates. For example, the handler of the exit command button in your user interface can make use of this function.
+        /// We recommend you to use this function in order to release the idle licenses for other clients in queue. This function is especially useful in cases where you have set the heartbeat interval as infinite. The Sentinel Protection Server will not release the license unless you call this function.
+        /// </summary>
+        /// <param name="thePacket">A pointer to the API packet.</param>
+        /// <param name="address">Specify zero to release the main license. Else, specify the cell address to release the sublicense from a particular cell.</param>
+        /// <param name="numberOfSublicensesToBeRelease">The pointer to the variable containing the number of sublicenses to be released. If the main license is to be released, this can be specified as null.</param>
+        /// <returns>Returns a SentinelStatusCode.</returns>
+        public static SentinelStatusCode ReleaseMainLicense(ulong[] thePacket, MemoryAddress address, ushort[] numberOfSublicensesToBeRelease,
+            [CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerFunctionName = "", [CallerLineNumber] int callerFunctionLine = 0)
+        {
+            var status = RNBOsproReleaseMainLicense(thePacket, address, numberOfSublicensesToBeRelease);
+            StatusCodeChecker.CheckForError(status, callerFilePath, callerFunctionName, callerFunctionLine);
+            return status;
+        }
+
+        /// <summary>
+        /// This function can be used to either release a license or sublicense(s).
+        /// You can call this function anytime after obtaining a license; followed by RNBOsproCleanUp.
+        /// You can call this function before your application terminates. For example, the handler of the exit command button in your user interface can make use of this function.
+        /// We recommend you to use this function in order to release the idle licenses for other clients in queue. This function is especially useful in cases where you have set the heartbeat interval as infinite. The Sentinel Protection Server will not release the license unless you call this function.
+        /// </summary>
+        /// <param name="thePacket">A pointer to the API packet.</param>
+        /// <returns>Returns a SentinelStatusCode.</returns>
+        public static SentinelStatusCode ReleaseMainLicense(ulong[] thePacket,
+            [CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerFunctionName = "", [CallerLineNumber] int callerFunctionLine = 0)
+        {
+            var status = RNBOsproReleaseMainLicense(thePacket, (ushort)MemoryAddress.SafeNet_KeySerialNumber, null);
+            StatusCodeChecker.CheckForError(status, callerFilePath, callerFunctionName, callerFunctionLine);
+            return status;
+        }
+
+        [DllImport("sx32w.dll", CharSet = CharSet.Unicode)]
+        [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
+        private static extern ushort RNBOsproSetContactServer(ulong[] thePacket, string serverName);
 
         /// <summary>
         /// This function sets the access mode for finding the key. You may also set this function to the IP or IPX address, NetBEUI name or name of the system where the Sentinel Protection Server is running.
@@ -325,13 +493,17 @@ namespace Mtf.HardwareKey
         /// <param name="serverName">A pointer to the location that contains one of the following values:
         /// RNBO_STANDALONE, RNBO_SPN_DRIVER, RNBO_SPN_LOCAL, RNBO_SPN_BROADCAST, RNBO_SPN_ALL_MODES, RNBO_SPN_SERVER_MODES, IP address, IPX address, NetBEUI name or the workstation name. However, the name length cannot exceed 63 single-byte characters</param>
         /// <returns>Returns a SentinelStatusCode.</returns>
-        [DllImport("sx32w.dll", CharSet = CharSet.Unicode)]
-        [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
-#if USE_PRIMITIVE_TYPES
-        public static extern ushort RNBOsproSetContactServer(ulong[] thePacket, string serverName);
-#else
-        public static extern SentinelStatusCode RNBOsproSetContactServer(ulong[] thePacket, string serverName);
-#endif
+        public static SentinelStatusCode SetContactServer(ulong[] thePacket, string serverName,
+            [CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerFunctionName = "", [CallerLineNumber] int callerFunctionLine = 0)
+        {
+            var status = RNBOsproSetContactServer(thePacket, serverName);
+            StatusCodeChecker.CheckForError(status, callerFilePath, callerFunctionName, callerFunctionLine);
+            return status;
+        }
+
+        [DllImport("sx32w.dll")]
+        [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
+        private static extern ushort RNBOsproSetHeartBeat(ulong[] thePacket, uint heartBeatValue);
 
         /// <summary>
         /// This function sets the heartbeat interval for maintaining the communication between a client and the Sentinel Protection Server. The heartbeat time
@@ -342,11 +514,19 @@ namespace Mtf.HardwareKey
         /// You should call this function after calling RNBOsproFindFirstUnit.
         /// </summary>
         /// <param name="thePacket">A pointer to the API packet.</param>
-        /// <param name="heart_beat_value">A value that represents time in seconds. The valid values are: LIC_UPDATE_INT = 120, MAX_HEARTBEAT = 2592000, MIN_HEARTBEAT = 60, INFINITE_HEARTBEAT = 0xFFFFFFFF</param>
+        /// <param name="heartBeatValue">A value that represents time in seconds. The valid values are: LIC_UPDATE_INT = 120, MAX_HEARTBEAT = 2592000, MIN_HEARTBEAT = 60, INFINITE_HEARTBEAT = 0xFFFFFFFF</param>
         /// <returns>Returns a SentinelStatusCode.</returns>
+        public static SentinelStatusCode SetHeartBeat(ulong[] thePacket, uint heartBeatValue,
+            [CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerFunctionName = "", [CallerLineNumber] int callerFunctionLine = 0)
+        {
+            var status = RNBOsproSetHeartBeat(thePacket, heartBeatValue);
+            StatusCodeChecker.CheckForError(status, callerFilePath, callerFunctionName, callerFunctionLine);
+            return status;
+        }
+
         [DllImport("sx32w.dll")]
-        [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
-        public static extern SentinelStatusCode RNBOsproSetHeartBeat(ulong[] thePacket, uint heart_beat_value);
+        [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
+        private static extern ushort RNBOsproSetProtocol(ulong[] thePacket, Protocol protocol);
 
         /// <summary>
         /// This function sets the network protocol for allowing communication between the client and Sentinel Protection Server. You can choose from the
@@ -356,9 +536,17 @@ namespace Mtf.HardwareKey
         /// <param name="thePacket">A pointer to the API packet.</param>
         /// <param name="protocol">The protocol chosen by a client for communication with the Sentinel Protection Server.</param>
         /// <returns>Returns a SentinelStatusCode.</returns>
+        public static SentinelStatusCode SetProtocol(ulong[] thePacket, Protocol protocol,
+            [CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerFunctionName = "", [CallerLineNumber] int callerFunctionLine = 0)
+        {
+            var status = RNBOsproSetProtocol(thePacket, protocol);
+            StatusCodeChecker.CheckForError(status, callerFilePath, callerFunctionName, callerFunctionLine);
+            return status;
+        }
+
         [DllImport("sx32w.dll")]
-        [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
-        public static extern SentinelStatusCode RNBOsproSetProtocol(ulong[] thePacket, Protocol protocol);
+        [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
+        private static extern ushort RNBOsproCheckTerminalService(ulong[] thePacket, TerminalService terminalService);
 
         /// <summary>
         /// This function allows you to enable/disable the application execution on terminal clients while RNBOsproFindFirstUnit, or RNBOsproFindNextUnit API
@@ -368,9 +556,17 @@ namespace Mtf.HardwareKey
         /// <param name="thePacket">A pointer to the API packet.</param>
         /// <param name="terminalService">The valid values are: SP_TERM_SERV_CHECK_ON, SP_TERM_SERV_CHECK_OFF.</param>
         /// <returns>Returns a SentinelStatusCode.</returns>
+        public static SentinelStatusCode CheckTerminalService(ulong[] thePacket, TerminalService terminalService,
+            [CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerFunctionName = "", [CallerLineNumber] int callerFunctionLine = 0)
+        {
+            var status = RNBOsproCheckTerminalService(thePacket, terminalService);
+            StatusCodeChecker.CheckForError(status, callerFilePath, callerFunctionName, callerFunctionLine);
+            return status;
+        }
+
         [DllImport("sx32w.dll")]
-        [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
-        public static extern SentinelStatusCode RNBOsproCheckTerminalService(ulong[] thePacket, TerminalService terminalService);
+        [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
+        private static extern ushort RNBOsproSetSharedLicense(ulong[] thePacket, ShareMainLicense shareMainLicense, ShareSublicense shareSublicense);
 
         /// <summary>
         /// This function allows you to enable/disable the main and sublicense sharing. The licenses issued to users from the same seat (a user name and MAC
@@ -380,9 +576,17 @@ namespace Mtf.HardwareKey
         /// <param name="shareMainLicense">Enables/disables the main license sharing. By default, main license sharing and device sharing are enabled.</param>
         /// <param name="shareSublicense">Enables/disables the sublicense sharing. By default, sublicense sharing is disabled.</param>
         /// <returns>Returns a SentinelStatusCode.</returns>
+        public static SentinelStatusCode SetSharedLicense(ulong[] thePacket, ShareMainLicense shareMainLicense, ShareSublicense shareSublicense,
+            [CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerFunctionName = "", [CallerLineNumber] int callerFunctionLine = 0)
+        {
+            var status = RNBOsproSetSharedLicense(thePacket, shareMainLicense, shareSublicense);
+            StatusCodeChecker.CheckForError(status, callerFilePath, callerFunctionName, callerFunctionLine);
+            return status;
+        }
+
         [DllImport("sx32w.dll")]
-        [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
-        public static extern SentinelStatusCode RNBOsproSetSharedLicense(ulong[] thePacket, ShareMainLicense shareMainLicense, ShareSublicense shareSublicense);
+        [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
+        private static extern ushort RNBOsproWrite(ulong[] thePacket, ushort writePassword, ushort address, ushort data, SentinelSuperProAccessCode accessCode);
 
         /// <summary>
         /// This function is used to write a word and its associated access code at the specified address.
@@ -394,13 +598,18 @@ namespace Mtf.HardwareKey
         /// <param name="data">Contains the word to write in the key.</param>
         /// <param name="accessCode">Contains the access code associated with the word to write.</param>
         /// <returns>Returns a SentinelStatusCode.</returns>
+        public static SentinelStatusCode Write(ulong[] thePacket, ushort writePassword, MemoryAddress address, ushort data, SentinelSuperProAccessCode accessCode,
+            [CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerFunctionName = "", [CallerLineNumber] int callerFunctionLine = 0)
+        {
+            var status = RNBOsproWrite(thePacket, writePassword, address, data, accessCode);
+            StatusCodeChecker.CheckForError(status, callerFilePath, callerFunctionName, callerFunctionLine);
+            return status;
+        }
+
         [DllImport("sx32w.dll")]
-        [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
-#if USE_PRIMITIVE_TYPES
-        public static extern ushort RNBOsproWrite(ulong[] thePacket, ushort writePassword, ushort address, ushort data, byte accessCode);
-#else
-        public static extern SentinelStatusCode RNBOsproWrite(ulong[] thePacket, ushort writePassword, MemoryAddress address, ushort data, SentinelSuperProAccessCode accessCode);
-#endif
+        [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
+        private static extern unsafe ushort RNBOsproSetDeveloperCode(ulong[] thePacket, void* devCode, ulong size);
+        //private static extern unsafe ushort RNBOsproSetDeveloperCode(ulong[] thePacket, UIntPtr devCode, ulong size);
 
         /// <summary>
         /// The function sets and validates Developer Code to create a Secure Communication Tunnel between the client and SuperPro key. Developer Code
@@ -411,13 +620,23 @@ namespace Mtf.HardwareKey
         /// <param name="devCode">A pointer to the buffer that contains Developer Code.</param>
         /// <param name="size">Size of Developer Code.</param>
         /// <returns>Returns a SentinelStatusCode.</returns>
+        public static unsafe SentinelStatusCode SetDeveloperCode(ulong[] thePacket, void* devCode, ulong size,
+            [CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerFunctionName = "", [CallerLineNumber] int callerFunctionLine = 0)
+        {
+            var status = RNBOsproSetDeveloperCode(thePacket, devCode, size);
+            StatusCodeChecker.CheckForError(status, callerFilePath, callerFunctionName, callerFunctionLine);
+            return status;
+        }
+
         [DllImport("sx32w.dll")]
-        [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
-#if USE_PRIMITIVE_TYPES
-        public static extern unsafe ushort RNBOsproSetDeveloperCode(ulong[] thePacket, void* devCode, ulong size);
-#else
-        public static extern SentinelStatusCode RNBOsproSetDeveloperCode(ulong[] thePacket, UIntPtr devCode, ulong size);
-#endif
+        [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
+        //private static extern SentinelStatusCode RNBOsproGetKeyInfoEx(ulong[] thePacket, HardwareKeyType developerId, ushort keyIndex, MemoryAddress sublicenseAddress, out NSPRO_monitorInfoEx monitorInfoEx, ulong size);
+        //private static extern SentinelStatusCode RNBOsproGetKeyInfoEx(ulong[] thePacket, HardwareKeyType developerId, ushort keyIndex, MemoryAddress sublicenseAddress, ref NSPRO_monitorInfoEx monitorInfoEx, ulong size);
+        //private static extern SentinelStatusCode RNBOsproGetKeyInfoEx(ulong[] thePacket, ulong developerId, ulong keyIndex, ulong sublicenseAddress, out NSPRO_monitorInfoEx monitorInfoEx, ulong size);
+        //private static extern ushort RNBOsproGetKeyInfoEx(ulong[] thePacket, ulong devId, ulong keyIndex, ulong subLicAddress, ref NSPRO_monitorInfoEx nsproMonitorInfoEx, ulong size);
+
+        private static extern ushort RNBOsproGetKeyInfoEx(ulong[] thePacket, ushort developerId, ushort keyIndex, ushort sublicenseAddress, byte[] monitorInfoEx, ushort size);
+        //private static extern SentinelStatusCode RNBOsproGetKeyInfoEx(ulong[] thePacket, ulong developerId, ulong keyIndex, ulong sublicenseAddress, ref NSPRO_monitorInfoEx monitorInfoEx, ulong size);
 
         /// <summary>
         /// The function is an enhanced version of RNBOsproGetKeyInfo, which has been deprecated from SuperPro 6.6. This function retrieves the following
@@ -437,14 +656,12 @@ namespace Mtf.HardwareKey
         /// <param name="monitorInfoEx">A pointer to the NSPRO_monitorInfoEx structure, which contains information about the key. Refer to spromeps.h for details.</param>
         /// <param name="size">The size of the NSPRO_monitorInfoEx structure, in bytes. Set this member to sizeof(NSPRO_monitorInfoEx) before calling this function.</param>
         /// <returns>Returns a SentinelStatusCode.</returns>
-        [DllImport("sx32w.dll")]
-        [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
-        //public static extern SentinelStatusCode RNBOsproGetKeyInfoEx(ulong[] thePacket, HardwareKeyType developerId, ushort keyIndex, MemoryAddress sublicenseAddress, out NSPRO_monitorInfoEx monitorInfoEx, ulong size);
-        //public static extern SentinelStatusCode RNBOsproGetKeyInfoEx(ulong[] thePacket, HardwareKeyType developerId, ushort keyIndex, MemoryAddress sublicenseAddress, ref NSPRO_monitorInfoEx monitorInfoEx, ulong size);
-        //public static extern SentinelStatusCode RNBOsproGetKeyInfoEx(ulong[] thePacket, ulong developerId, ulong keyIndex, ulong sublicenseAddress, out NSPRO_monitorInfoEx monitorInfoEx, ulong size);
-        //public static extern ushort RNBOsproGetKeyInfoEx(ulong[] thePacket, ulong devId, ulong keyIndex, ulong subLicAddress, ref NSPRO_monitorInfoEx nsproMonitorInfoEx, ulong size);
-
-        public static extern SentinelStatusCode RNBOsproGetKeyInfoEx(ulong[] thePacket, ushort developerId, ushort keyIndex, ushort sublicenseAddress, byte[] monitorInfoEx, ushort size);
-        //public static extern SentinelStatusCode RNBOsproGetKeyInfoEx(ulong[] thePacket, ulong developerId, ulong keyIndex, ulong sublicenseAddress, ref NSPRO_monitorInfoEx monitorInfoEx, ulong size);
+        public static SentinelStatusCode GetKeyInfoEx(ulong[] thePacket, ushort developerId, ushort keyIndex, ushort sublicenseAddress, byte[] monitorInfoEx, ushort size,
+            [CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerFunctionName = "", [CallerLineNumber] int callerFunctionLine = 0)
+        {
+            var status = RNBOsproGetKeyInfoEx(thePacket, developerId, keyIndex, sublicenseAddress, monitorInfoEx, size);
+            StatusCodeChecker.CheckForError(status, callerFilePath, callerFunctionName, callerFunctionLine);
+            return status;
+        }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Mtf.HardwareKey.Enums
 {
-    public enum EnumServer
+    public enum EnumServer : ushort
     {
         /// <summary>
         /// First-found Sentinel Protection Server that has a license to offer.

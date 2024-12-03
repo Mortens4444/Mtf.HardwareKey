@@ -5,6 +5,8 @@ namespace Mtf.HardwareKey.Models
 {
     public sealed class SentinelStatusCode
     {
+        public static readonly SortedList<ushort, SentinelStatusCode> Values = new SortedList<ushort, SentinelStatusCode>();
+
         public static readonly SentinelStatusCode Success = new SentinelStatusCode(0, "The function completed successfully.");
         public static readonly SentinelStatusCode InvalidFunctionCode = new SentinelStatusCode(1, "You specified an invalid function code.See the include file for your language /interface (for example, spromeps.h) for valid API function codes.Generally, this error should not occur if you are using an interface provided by us to communicate with the Sentinel system driver.However, it may occur when a stand-alone “only” function is used in a network situation.");
         public static readonly SentinelStatusCode InvalidPacket = new SentinelStatusCode(2, "A checksum error was detected in the command packet, indicating an internal inconsistency.The packet record has not been initialized, or may have been tampered with.Generally, this error should not occur if you are using an interface provided by us to communicate with the Sentinel system driver.");
@@ -108,9 +110,7 @@ namespace Mtf.HardwareKey.Models
         public static readonly SentinelStatusCode AppNotSupported = new SentinelStatusCode(433, "SH_SP_APP_NOT_SUPPORTED");
         public static readonly SentinelStatusCode FileCopy = new SentinelStatusCode(434, "SH_SP_FILE_COPY");
         public static readonly SentinelStatusCode HeaderSizeExceed = new SentinelStatusCode(435, "SH_SP_HEADER_SIZE_EXCEED");
-        public static readonly SentinelStatusCode UnknownError = new SentinelStatusCode(ushort.MaxValue, "Unknown error occured.");
-
-        public static readonly SortedList<ushort, SentinelStatusCode> Values = new SortedList<ushort, SentinelStatusCode>();
+        public static readonly SentinelStatusCode UnknownError = new SentinelStatusCode(ushort.MaxValue, "Unknown error occured, check if Sentinel's driver is installed.");
 
         private readonly ushort code;
 
@@ -130,7 +130,7 @@ namespace Mtf.HardwareKey.Models
 
         public static implicit operator ushort(SentinelStatusCode errorCode)
         {
-            return errorCode.code;
+            return errorCode?.code ?? UnknownError;
         }
 
         public override string ToString() => $"{code}{Environment.NewLine}{Description}";

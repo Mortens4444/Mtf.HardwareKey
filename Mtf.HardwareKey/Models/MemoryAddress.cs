@@ -9,6 +9,8 @@ namespace Mtf.HardwareKey.Models
 {
     public sealed class MemoryAddress
     {
+        public static readonly SortedList<ushort, MemoryAddress> Values = new SortedList<ushort, MemoryAddress>();
+
         private const ushort MaxAddress = 255;
 
         public static Dictionary<(HardwareKeyDeveloper, BitMemoryDataType), BitMemoryAddress> HardwareKeyBitMaps => new Dictionary<(HardwareKeyDeveloper, BitMemoryDataType), BitMemoryAddress>
@@ -86,8 +88,6 @@ namespace Mtf.HardwareKey.Models
         /// 0x07: SafeNet
         /// </summary>
         public static readonly MemoryAddress SafeNet = new MemoryAddress(7, "0x07: SafeNet");
-
-        public static readonly SortedList<ushort, MemoryAddress> Values = new SortedList<ushort, MemoryAddress>();
 
         static MemoryAddress()
         {

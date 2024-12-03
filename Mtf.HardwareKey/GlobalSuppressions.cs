@@ -19,3 +19,4 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Design", "CA1065:Do not raise exceptions in unexpected locations", Justification = "<Pending>", Scope = "member", Target = "~M:Mtf.HardwareKey.Models.MemoryAddress.op_Implicit(System.UInt16)~Mtf.HardwareKey.Models.MemoryAddress")]
 [assembly: SuppressMessage("Naming", "CA1711:Identifiers should not have incorrect suffix")]
 [assembly: SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "<Pending>", Scope = "member", Target = "~F:Mtf.HardwareKey.SentinelSuperProHardwareKey.licenseMaintainer")]
+[assembly: SuppressMessage("Security", "CA5393:Do not use unsafe DllImportSearchPath value", Justification = "<Pending>", Scope = "type", Target = "~T:Mtf.HardwareKey.SentinelAPI")]

@@ -1,33 +1,35 @@
-﻿using System;
+﻿using Mtf.HardwareKey.Models;
+using Mtf.HardwareKey.Structs;
+using System;
 
 namespace Mtf.HardwareKey.Services
 {
     public static class HardwareKeyPacketBuilder
     {
-        public static ulong[] Create(string contactServer = "")
+        public static ulong[] Create(HardwareKeyDeveloper developerId, string contactServer = "")
         {
             var apiPacket = new ulong[Constants.NsproApiPacketSize];
 
-            var status = SentinelAPI.RNBOsproFormatPacket(apiPacket, (ushort)apiPacket.Length);
-            StatusCodeChecker.CheckForError(status);
-
-            status = SentinelAPI.RNBOsproInitialize(apiPacket);
-            StatusCodeChecker.CheckForError(status);
+            _ = SentinelAPI.FormatPacket(apiPacket, (ushort)apiPacket.Length);
+            _ = SentinelAPI.Initialize(apiPacket);
 
             //ushort numberOfProtectionServers = 0;
-            //var serverInfo = new byte[10000];
             //var serverInfo = new NSPRO_SERVER_INFO[10];
             //for (var i = 0; i < serverInfo.Length; i++)
             //{
             //    serverInfo[i] = new NSPRO_SERVER_INFO();
+            //    serverInfo[i].Initialize();
             //}
-            //var status = SentinelAPI.RNBOsproEnumServer(ENUM_SERVER_FLAG.NSPRO_GET_ALL_SERVERS, 0xFFFF, serverInfo, ref numberOfProtectionServers);
-            //StatusCodeChecker.CheckForError(status);
+            //_ = SentinelAPI.EnumServer(Enums.EnumServer.AllSentinalProtectionServer, serverInfo, ref numberOfProtectionServers);
 
-            //status = SentinelAPI.RNBOsproSetContactServer(apiPacket, Constants.RnboStandAlone);
-            status = SentinelAPI.RNBOsproSetContactServer(apiPacket, String.IsNullOrEmpty(contactServer) ? Constants.RnboSpnDriver : contactServer);
-            StatusCodeChecker.CheckForError(status);
-
+            if (!String.IsNullOrEmpty(contactServer))
+            {
+                //status = SentinelAPI.SetContactServer(apiPacket, Constants.RnboStandAlone);
+                //status = SentinelAPI.SetContactServer(apiPacket, Constants.RnboSpnDriver);
+                _ = SentinelAPI.SetContactServer(apiPacket, contactServer);
+            }
+            //_ = SentinelAPI.GetContactServer(apiPacket, "no-net".ToCharArray(), 6);
+            //_ = SentinelAPI.SetContactServer(apiPacket, "no-net");
             return apiPacket;
         }
     }

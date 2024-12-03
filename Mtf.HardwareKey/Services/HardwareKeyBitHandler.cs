@@ -36,9 +36,7 @@ namespace Mtf.HardwareKey.Services
 
         private static bool IsBitSet(ulong[] apiPacket, ushort address, Bit bit)
         {
-            var status = SentinelAPI.RNBOsproRead(apiPacket, address, out var value);
-            StatusCodeChecker.CheckForError(status);
-
+            _ = SentinelAPI.Read(apiPacket, address, out var value);
             var mask = (ushort)(1 << (15 - (int)bit));
             return (value & mask) != 0;
         }
@@ -68,15 +66,13 @@ namespace Mtf.HardwareKey.Services
 
         private static void WriteBit(HardwareKeyDeveloper developerId, ulong[] apiPacket, ushort address, Bit bit, bool bitValue)
         {
-            var status = SentinelAPI.RNBOsproRead(apiPacket, address, out var value);
-            StatusCodeChecker.CheckForError(status);
+            _ = SentinelAPI.Read(apiPacket, address, out var value);
 
             var mask = (ushort)(1 << (15 - (int)bit));
 
             value = bitValue ? (ushort)(value | mask) : (ushort)(value & ~mask);
 
-            status = SentinelAPI.RNBOsproWrite(apiPacket, developerId.WritePassword, address, value, 0);
-            StatusCodeChecker.CheckForError(status);
+            _ = SentinelAPI.Write(apiPacket, developerId.WritePassword, address, value, 0);
         }
     }
 }

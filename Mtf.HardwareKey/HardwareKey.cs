@@ -18,12 +18,15 @@ namespace Mtf.HardwareKey
 
         public HardwareKeyDeveloper DeveloperId { get; private set; }
 
-        public HardwareKey(HardwareKeyDeveloper developerId, ushort hardwareKeyIndex, string contactServer)
+        public HardwareKey(HardwareKeyDeveloper developerId, ushort hardwareKeyIndex, string contactServer, bool autoSelect)
         {
             DeveloperId = developerId;
             HardwareKeyIndex = hardwareKeyIndex;
-            ApiPacket = HardwareKeyPacketBuilder.Create(contactServer);
-            HardwareKeySelector.Select(this);
+            ApiPacket = HardwareKeyPacketBuilder.Create(developerId, contactServer);
+            if (autoSelect)
+            {
+                HardwareKeySelector.Select(this);
+            }
         }
 
         ~HardwareKey()
@@ -56,27 +59,23 @@ namespace Mtf.HardwareKey
 
         public ushort ReadCellValue(MemoryAddress address)
         {
-            var status = SentinelAPI.RNBOsproRead(ApiPacket, address, out var result);
-            StatusCodeChecker.CheckForError(status);
+            _ = SentinelAPI.Read(ApiPacket, address, out var result);
             return result;
         }
 
         public void WriteCellValue(MemoryAddress address, ushort data, SentinelSuperProAccessCode accessCode = SentinelSuperProAccessCode.ReadWrite)
         {
-            var status = SentinelAPI.RNBOsproWrite(ApiPacket, DeveloperId.WritePassword, address, data, accessCode);
-            StatusCodeChecker.CheckForError(status);
+            _ = SentinelAPI.Write(ApiPacket, DeveloperId.WritePassword, address, data, accessCode);
         }
 
         public bool CanReadFrom(MemoryAddress address)
         {
-            var status = SentinelAPI.RNBOsproRead(ApiPacket, address, out _);
-            return status == SentinelStatusCode.Success;
+            return SentinelAPI.CanRead(ApiPacket, address);
         }
 
         public void OverwriteCellValue(MemoryAddress address, ushort data)
         {
-            var status = SentinelAPI.RNBOsproOverwrite(ApiPacket, DeveloperId.WritePassword, DeveloperId.OverwritePassword1, DeveloperId.OverwritePassword2, address, data, 0);
-            StatusCodeChecker.CheckForError(status);
+            _ = SentinelAPI.Overwrite(ApiPacket, DeveloperId.WritePassword, DeveloperId.OverwritePassword1, DeveloperId.OverwritePassword2, address, data, 0);
         }
 
         public byte ReadByte(MemoryAddress address, ByteType type)
@@ -92,7 +91,7 @@ namespace Mtf.HardwareKey
 
         public virtual string ReadCellValueWithNoException(MemoryAddress address)
         {
-            var status = SentinelAPI.RNBOsproRead(ApiPacket, address, out var result);
+            var status = SentinelAPI.Read(ApiPacket, address, out var result);
             return status != SentinelStatusCode.Success ? status.ToString() : result.ToString(CultureInfo.InvariantCulture);
         }
 

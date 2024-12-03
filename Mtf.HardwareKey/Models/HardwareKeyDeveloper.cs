@@ -5,7 +5,7 @@ namespace Mtf.HardwareKey.Models
 {
     public sealed class HardwareKeyDeveloper
     {
-        private readonly Dictionary<ushort, PasswordStorage> additionalKeyData = new Dictionary<ushort, PasswordStorage>()
+        private static readonly Dictionary<ushort, PasswordStorage> additionalKeyData = new Dictionary<ushort, PasswordStorage>()
         {
         };
 

@@ -12,13 +12,13 @@ namespace Mtf.HardwareKey.Services
             ushort developerId = 0;
             var found = false;
 
-            var apiPacket = HardwareKeyPacketBuilder.Create();
+            var apiPacket = HardwareKeyPacketBuilder.Create(developerId);
 
             try
             {
                 while (developerId < UInt16.MaxValue)
                 {
-                    var status = SentinelAPI.RNBOsproFindFirstUnit(apiPacket, developerId);
+                    var status = SentinelAPI.FindFirstUnit(apiPacket, developerId);
                     if (status == SentinelStatusCode.Success)
                     {
                         found = true;
@@ -42,7 +42,7 @@ namespace Mtf.HardwareKey.Services
 
             do
             {
-                status = SentinelAPI.RNBOsproFindFirstUnit(apiPacket, developerId++);
+                status = SentinelAPI.FindFirstUnit(apiPacket, developerId++);
             }
             while (status != SentinelStatusCode.Success && developerId < ushort.MaxValue);
             return developerId;
@@ -58,7 +58,7 @@ namespace Mtf.HardwareKey.Services
             var originalData = hardwareKey.ReadCellValue(address);
             var data = originalData == UInt16.MaxValue ? (ushort)(originalData - 1) : (ushort)(originalData + 1);
 
-            _ = SentinelAPI.RNBOsproWrite(apiPacket, writePassword, address, data, 0);
+            _ = SentinelAPI.Write(apiPacket, writePassword, address, data, 0);
 
             hardwareKey.WriteCellValue(address, data);
             if (hardwareKey.ReadCellValue(address) == originalData)
@@ -66,7 +66,7 @@ namespace Mtf.HardwareKey.Services
                 return false;
             }
 
-            _ = SentinelAPI.RNBOsproWrite(apiPacket, writePassword, address, originalData, 0);
+            _ = SentinelAPI.Write(apiPacket, writePassword, address, originalData, 0);
             return hardwareKey.ReadCellValue(address) == originalData;
         }
 

@@ -22,24 +22,22 @@ namespace Mtf.HardwareKey.Services
                 throw new ArgumentNullException(nameof(developerId));
             }
 
-            // Connects to Internet?
-            var status = SentinelAPI.RNBOsproFindFirstUnit(apiPacket, developerId);
+            //_ = SentinelAPI.SetDeveloperCode(apiPacket, developerCode, size);
+
+            _ = SentinelAPI.FindFirstUnit(apiPacket, developerId);
             //if (status == SentinelStatusCode.NoLicenseAvailable)
             //{
-            //    //status = SentinelAPI.RNBOsproReleaseMainLicense(apiPacket);
-            //    status = SentinelAPI.RNBOsproReleaseLicense(apiPacket, MemoryAddress.Get(developerId, MemoryDataType.SafeNetKeySerialNumber), new ushort[] { 0 });
+            //    //status = SentinelAPI.ReleaseMainLicense(apiPacket);
+            //    status = SentinelAPI.ReleaseLicense(apiPacket, MemoryAddress.Get(developerId, MemoryDataType.SafeNetKeySerialNumber), new ushort[] { 0 });
             //    StatusCodeChecker.CheckForError(status);
 
-            //    status = SentinelAPI.RNBOsproFindFirstUnit(apiPacket, developerId);
+            //    status = SentinelAPI.FindFirstUnit(apiPacket, developerId);
             //}
-            StatusCodeChecker.CheckForError(status);
 
-            while ((hardwareKeyIndex > 0) && ((status = SentinelAPI.RNBOsproFindNextUnit(apiPacket)) == SentinelStatusCode.Success))
+            while ((hardwareKeyIndex > 0) && (SentinelAPI.FindNextUnit(apiPacket) == SentinelStatusCode.Success))
             {
                 hardwareKeyIndex--;
             }
-
-            StatusCodeChecker.CheckForError(status);
         }
     }
 }

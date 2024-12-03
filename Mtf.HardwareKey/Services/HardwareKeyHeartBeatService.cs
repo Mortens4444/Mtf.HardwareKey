@@ -11,11 +11,10 @@ namespace Mtf.HardwareKey.Services
                 second = 60;
             }
 
-            var heartbeatApiPacket = HardwareKeyPacketBuilder.Create();
+            var heartbeatApiPacket = HardwareKeyPacketBuilder.Create(developerId);
             HardwareKeySelector.Select(developerId, heartbeatApiPacket, index);
 
-            var status = SentinelAPI.RNBOsproSetHeartBeat(heartbeatApiPacket, second);
-            StatusCodeChecker.CheckForError(status);
+            _ = SentinelAPI.SetHeartBeat(heartbeatApiPacket, second);
 
             HardwareKeyCleanupService.Cleanup(heartbeatApiPacket);
         }
