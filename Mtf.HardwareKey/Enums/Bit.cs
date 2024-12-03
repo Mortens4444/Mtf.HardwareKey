@@ -7,9 +7,9 @@
     public enum Bit : byte
     {
         /// <summary>
-        /// Least significant bit
+        /// Most significant bit
         /// </summary>
-        _00_LSB,
+        _00_MSB,
         _01,
         _02,
         _03,
@@ -24,9 +24,9 @@
         _12,
         _13,
         _14,
+        _15_LSB
         /// <summary>
-        /// Most significant bit
+        /// Least significant bit
         /// </summary>
-        _15_MSB
     }
 }

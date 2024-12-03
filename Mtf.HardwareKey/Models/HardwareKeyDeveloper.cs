@@ -5,6 +5,8 @@ namespace Mtf.HardwareKey.Models
 {
     public sealed class HardwareKeyDeveloper
     {
+        public static readonly SortedList<ushort, HardwareKeyDeveloper> Values = new SortedList<ushort, HardwareKeyDeveloper>();
+
         private static readonly Dictionary<ushort, PasswordStorage> additionalKeyData = new Dictionary<ushort, PasswordStorage>()
         {
         };
@@ -12,7 +14,6 @@ namespace Mtf.HardwareKey.Models
         public static readonly HardwareKeyDeveloper Test1 = new HardwareKeyDeveloper(2345);
         public static readonly HardwareKeyDeveloper Test2 = new HardwareKeyDeveloper(3456);
 
-        public static readonly SortedList<ushort, HardwareKeyDeveloper> Values = new SortedList<ushort, HardwareKeyDeveloper>();
 
         private readonly ushort developerId;
 

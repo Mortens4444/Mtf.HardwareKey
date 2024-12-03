@@ -103,7 +103,8 @@ public class HardwareKeyExample
         var hardwareKey = new HardwareKey(HardwareKeyDeveloper.YourDeveloperId, 0, "yourContactServer");
 
         // Read and write cell values
-        var address = new MemoryAddress(0x01);
+        var address = (MemoryAddress)0x01;
+        //var address = MemoryAddress.SafeNet_DeveloperId;
         ushort cellValue = hardwareKey.ReadCellValue(address);
         Console.WriteLine($"Read cell value: {cellValue}");
 
@@ -111,7 +112,7 @@ public class HardwareKeyExample
         Console.WriteLine($"New cell value written.");
 
         // Perform a bitwise operation
-        hardwareKey.WriteBit(address, Bit.Bit7, true);
+        hardwareKey.WriteBit(address, Bit._07, true);
 
         // Dispose of the hardware key instance
         hardwareKey.Dispose();

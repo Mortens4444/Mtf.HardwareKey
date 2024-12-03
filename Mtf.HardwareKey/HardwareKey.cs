@@ -18,7 +18,7 @@ namespace Mtf.HardwareKey
 
         public HardwareKeyDeveloper DeveloperId { get; private set; }
 
-        public HardwareKey(HardwareKeyDeveloper developerId, ushort hardwareKeyIndex, string contactServer, bool autoSelect)
+        public HardwareKey(HardwareKeyDeveloper developerId, ushort hardwareKeyIndex = 0, string contactServer = null, bool autoSelect = true)
         {
             DeveloperId = developerId;
             HardwareKeyIndex = hardwareKeyIndex;
@@ -84,9 +84,20 @@ namespace Mtf.HardwareKey
             return type == ByteType.Higher ? (byte)(word >> 8) : (byte)(word & 0x00FF);
         }
 
+        public void WriteBit(BitMemoryDataType bitMemoryDataType, bool bitValue)
+        {
+            var bitMemoryAddress = GetBitMemoryAddress(bitMemoryDataType);
+            WriteBit(bitMemoryAddress, bitValue);
+        }
+
         public void WriteBit(MemoryAddress address, Bit bit, bool bitValue)
         {
-            HardwareKeyBitHandler.WriteBit(DeveloperId, ApiPacket, new BitMemoryAddress(address, bit), bitValue);
+            WriteBit(new BitMemoryAddress(address, bit), bitValue);
+        }
+
+        public void WriteBit(BitMemoryAddress bitMemoryAddress, bool bitValue)
+        {
+            HardwareKeyBitHandler.WriteBit(DeveloperId, ApiPacket, bitMemoryAddress, bitValue);
         }
 
         public virtual string ReadCellValueWithNoException(MemoryAddress address)

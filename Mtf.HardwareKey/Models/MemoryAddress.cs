@@ -11,7 +11,7 @@ namespace Mtf.HardwareKey.Models
     {
         public static readonly SortedList<ushort, MemoryAddress> Values = new SortedList<ushort, MemoryAddress>();
 
-        private const ushort MaxAddress = 255;
+        public const ushort MaxAddress = 255;
 
         public static Dictionary<(HardwareKeyDeveloper, BitMemoryDataType), BitMemoryAddress> HardwareKeyBitMaps => new Dictionary<(HardwareKeyDeveloper, BitMemoryDataType), BitMemoryAddress>
         {
@@ -91,7 +91,7 @@ namespace Mtf.HardwareKey.Models
 
         static MemoryAddress()
         {
-            for (ushort address = 8; address < 255; address++)
+            for (ushort address = 8; address <= 255; address++)
             {
                 _ = new MemoryAddress(address, String.Concat("0x", address.ToString("X", CultureInfo.InvariantCulture)));
             }
@@ -109,9 +109,9 @@ namespace Mtf.HardwareKey.Models
 
         public static MemoryDataType GetDataType(HardwareKeyDeveloper hardwareKeyType, ushort address)
         {
-            return address >= MaxAddress ? throw new ArgumentOutOfRangeException(nameof(address))
+            return address > MaxAddress ? throw new ArgumentOutOfRangeException(nameof(address))
                 : address >= 240 ? MemoryDataType.SafeNet
-                : hardwareKeyMaps[(hardwareKeyType, address)];
+                : hardwareKeyMaps.ContainsKey((hardwareKeyType, address)) ? hardwareKeyMaps[(hardwareKeyType, address)] : MemoryDataType.Unknown;
         }
 
         public static implicit operator MemoryAddress(ushort address)

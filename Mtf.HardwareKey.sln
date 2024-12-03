@@ -7,6 +7,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mtf.HardwareKey", "Mtf.Hard
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mtf.HardwareKey.UnitTests", "Mtf.HardwareKey.UnitTests\Mtf.HardwareKey.UnitTests.csproj", "{2F3BB7AC-5EB1-4285-9BD7-CDA59C6DD021}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mtf.HardwareKey.Test", "Mtf.HardwareKey.Test\Mtf.HardwareKey.Test.csproj", "{17E87CE3-7F83-4683-B208-EE00860D036F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+	ProjectSection(SolutionItems) = preProject
+		ReadMe.md = ReadMe.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,8 +28,15 @@ Global
 		{2F3BB7AC-5EB1-4285-9BD7-CDA59C6DD021}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F3BB7AC-5EB1-4285-9BD7-CDA59C6DD021}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2F3BB7AC-5EB1-4285-9BD7-CDA59C6DD021}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17E87CE3-7F83-4683-B208-EE00860D036F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17E87CE3-7F83-4683-B208-EE00860D036F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17E87CE3-7F83-4683-B208-EE00860D036F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17E87CE3-7F83-4683-B208-EE00860D036F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8C6812AE-0239-4007-B6B0-39670FB91872}
 	EndGlobalSection
 EndGlobal

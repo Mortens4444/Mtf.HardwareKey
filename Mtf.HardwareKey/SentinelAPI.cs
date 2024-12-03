@@ -47,7 +47,7 @@ namespace Mtf.HardwareKey
 
         [DllImport("sx32w.dll")]
         [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
-        private static extern ushort RNBOsproDecrement(ulong[] thePacket, ushort writePassword, MemoryAddress address);
+        private static extern ushort RNBOsproDecrement(ulong[] thePacket, ushort writePassword, ushort address);
 
         /// <summary>
         /// This function is used to decrement a counter word by one.
@@ -95,7 +95,7 @@ namespace Mtf.HardwareKey
 
         [DllImport("sx32w.dll")]
         [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
-        private static extern ushort RNBOsproExtendedRead(ulong[] thePacket, MemoryAddress address, out ushort data, out SentinelSuperProAccessCode accessCode);
+        private static extern ushort RNBOsproExtendedRead(ulong[] thePacket, ushort address, out ushort data, out SentinelSuperProAccessCode accessCode);
 
         /// <summary>
         /// This function reads the word and access code at the specified address. On success, the data variable contains the information from the SuperPro key and the access code variable contains the access code.
@@ -115,7 +115,7 @@ namespace Mtf.HardwareKey
 
         [DllImport("sx32w.dll")]
         [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
-        private static extern ushort RNBOsproFindFirstUnit(ulong[] thePacket, HardwareKeyDeveloper developerId);
+        private static extern ushort RNBOsproFindFirstUnit(ulong[] thePacket, ushort developerId);
 
         /// <summary>
         /// This function finds the first SuperPro key with the specified developer ID and obtains a license, if available.
@@ -132,10 +132,6 @@ namespace Mtf.HardwareKey
             StatusCodeChecker.CheckForError(status, callerFilePath, callerFunctionName, callerFunctionLine);
             return status;
         }
-
-        [DllImport("sx32w.dll")]
-        [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
-        private static extern ushort RNBOsproFindFirstUnit(ulong[] thePacket, ushort developerId);
 
         /// <summary>
         /// This function finds the first SuperPro key with the specified developer ID and obtains a license, if available.
@@ -193,7 +189,6 @@ namespace Mtf.HardwareKey
 
         [DllImport("sx32w.dll", CharSet = CharSet.Unicode)]
         [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
-        //private static extern SentinelStatusCode RNBOsproGetContactServer(ulong[] thePacket, StringBuilder serverName, ushort serverNameLength);
         private static extern ushort RNBOsproGetContactServer(ulong[] thePacket, char[] serverName, ushort serverNameLength);
 
         /// <summary>
@@ -249,8 +244,8 @@ namespace Mtf.HardwareKey
         [Obsolete]
         [DllImport("sx32w.dll")]
         [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
-        //private static extern ushort RNBOsproGetKeyInfo(ulong[] thePacket, ushort devId, ushort keyIndex, ref NSPRO_monitorInfo nsproMonitorInfo);
-        private static extern ushort RNBOsproGetKeyInfo(ulong[] thePacket, HardwareKeyDeveloper developerId, ushort keyIndex, ref byte[] monitorInfo);
+        //private static extern ushort RNBOsproGetKeyInfo(ulong[] thePacket, ushort developerId, ushort keyIndex, ref NSPRO_monitorInfo monitorInfo);
+        private static extern ushort RNBOsproGetKeyInfo(ulong[] thePacket, ushort developerId, ushort keyIndex, ref byte[] monitorInfo);
 
         /// <summary>
         /// This function retrieves the following information about the key attached on a stand-alone system or a network computer
@@ -268,7 +263,6 @@ namespace Mtf.HardwareKey
             StatusCodeChecker.CheckForError(status, callerFilePath, callerFunctionName, callerFunctionLine);
             return status;
         }
-        //private static extern SentinelStatusCode RNBOsproGetKeyInfo(ulong[] thePacket, HardwareKeyType developerId, ushort keyIndex, ref NSPRO_monitorInfo monitorInfo);
 
         [DllImport("sx32w.dll")]
         [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
@@ -292,7 +286,7 @@ namespace Mtf.HardwareKey
 
         [DllImport("sx32w.dll")]
         [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
-        private static extern ushort RNBOsproGetSubLicense(ulong[] thePacket, MemoryAddress address);
+        private static extern ushort RNBOsproGetSubLicense(ulong[] thePacket, ushort address);
 
         /// <summary>
         /// This function obtains a sublicense from a locked data word (has an access code 1). You can call the RNBOsproGetSubLicense function only after calling the RNBOsproFindFirstUnit function.
@@ -349,7 +343,7 @@ namespace Mtf.HardwareKey
 
         [DllImport("sx32w.dll")]
         [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
-        private static extern ushort RNBOsproOverwrite(ulong[] thePacket, ushort writePassword, ushort overwritePassword1, ushort overwritePassword2, MemoryAddress address, ushort data, SentinelSuperProAccessCode accessCode);
+        private static extern ushort RNBOsproOverwrite(ulong[] thePacket, ushort writePassword, ushort overwritePassword1, ushort overwritePassword2, ushort address, ushort data, SentinelSuperProAccessCode accessCode);
 
         /// <summary>
         /// This function is used to change the value and access code of a word at the specified address.
@@ -373,7 +367,7 @@ namespace Mtf.HardwareKey
 
         [DllImport("sx32w.dll")]
         [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
-        //private static extern SentinelStatusCode RNBOsproQuery(ulong[] thePacket, ushort address, byte[] queryData, out byte[] response, out ulong[] response32, ushort length);
+        //private static extern ushort RNBOsproQuery(ulong[] thePacket, ushort address, byte[] queryData, out byte[] response, out ulong[] response32, ushort length);
         private static extern ushort RNBOsproQuery(ulong[] thePacket, ushort address, byte[] queryData, byte[] response, ulong[] response32, ushort length);
 
         /// <summary>
@@ -392,7 +386,7 @@ namespace Mtf.HardwareKey
         public static SentinelStatusCode Query(ulong[] thePacket, MemoryAddress address, byte[] queryData, byte[] response, ulong[] response32, ushort length,
             [CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerFunctionName = "", [CallerLineNumber] int callerFunctionLine = 0)
         {
-            var status = RNBOsproQuery(thePacket, address, queryData, response, response32, length);
+            var status = RNBOsproQuery(thePacket, (ushort)address, queryData, response, response32, length);
             StatusCodeChecker.CheckForError(status, callerFilePath, callerFunctionName, callerFunctionLine);
             return status;
         }
@@ -461,7 +455,7 @@ namespace Mtf.HardwareKey
         public static SentinelStatusCode ReleaseMainLicense(ulong[] thePacket, MemoryAddress address, ushort[] numberOfSublicensesToBeRelease,
             [CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerFunctionName = "", [CallerLineNumber] int callerFunctionLine = 0)
         {
-            var status = RNBOsproReleaseMainLicense(thePacket, address, numberOfSublicensesToBeRelease);
+            var status = RNBOsproReleaseMainLicense(thePacket, (ushort)address, numberOfSublicensesToBeRelease);
             StatusCodeChecker.CheckForError(status, callerFilePath, callerFunctionName, callerFunctionLine);
             return status;
         }
@@ -601,7 +595,7 @@ namespace Mtf.HardwareKey
         public static SentinelStatusCode Write(ulong[] thePacket, ushort writePassword, MemoryAddress address, ushort data, SentinelSuperProAccessCode accessCode,
             [CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerFunctionName = "", [CallerLineNumber] int callerFunctionLine = 0)
         {
-            var status = RNBOsproWrite(thePacket, writePassword, address, data, accessCode);
+            var status = RNBOsproWrite(thePacket, writePassword, (ushort)address, data, accessCode);
             StatusCodeChecker.CheckForError(status, callerFilePath, callerFunctionName, callerFunctionLine);
             return status;
         }
@@ -630,13 +624,11 @@ namespace Mtf.HardwareKey
 
         [DllImport("sx32w.dll")]
         [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
-        //private static extern SentinelStatusCode RNBOsproGetKeyInfoEx(ulong[] thePacket, HardwareKeyType developerId, ushort keyIndex, MemoryAddress sublicenseAddress, out NSPRO_monitorInfoEx monitorInfoEx, ulong size);
-        //private static extern SentinelStatusCode RNBOsproGetKeyInfoEx(ulong[] thePacket, HardwareKeyType developerId, ushort keyIndex, MemoryAddress sublicenseAddress, ref NSPRO_monitorInfoEx monitorInfoEx, ulong size);
-        //private static extern SentinelStatusCode RNBOsproGetKeyInfoEx(ulong[] thePacket, ulong developerId, ulong keyIndex, ulong sublicenseAddress, out NSPRO_monitorInfoEx monitorInfoEx, ulong size);
+        //private static extern ushort RNBOsproGetKeyInfoEx(ulong[] thePacket, ulong developerId, ulong keyIndex, ulong sublicenseAddress, out NSPRO_monitorInfoEx monitorInfoEx, ulong size);
         //private static extern ushort RNBOsproGetKeyInfoEx(ulong[] thePacket, ulong devId, ulong keyIndex, ulong subLicAddress, ref NSPRO_monitorInfoEx nsproMonitorInfoEx, ulong size);
 
         private static extern ushort RNBOsproGetKeyInfoEx(ulong[] thePacket, ushort developerId, ushort keyIndex, ushort sublicenseAddress, byte[] monitorInfoEx, ushort size);
-        //private static extern SentinelStatusCode RNBOsproGetKeyInfoEx(ulong[] thePacket, ulong developerId, ulong keyIndex, ulong sublicenseAddress, ref NSPRO_monitorInfoEx monitorInfoEx, ulong size);
+        //private static extern ushort RNBOsproGetKeyInfoEx(ulong[] thePacket, ulong developerId, ulong keyIndex, ulong sublicenseAddress, ref NSPRO_monitorInfoEx monitorInfoEx, ulong size);
 
         /// <summary>
         /// The function is an enhanced version of RNBOsproGetKeyInfo, which has been deprecated from SuperPro 6.6. This function retrieves the following
