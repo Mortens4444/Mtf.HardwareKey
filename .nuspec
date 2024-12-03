@@ -2,9 +2,9 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Mtf.HardwareKey</id>
-    <version>1.0.6</version>
+    <version>1.0.8</version>
     <description>
-      Sentinel SuperPro Harware Key Helper Library.
+      Sentinel SuperPro Harware Key Helper Library (x86).
       
       The library includes various serial devices, such as:
       - Sentinel SuperPro Harware Key
