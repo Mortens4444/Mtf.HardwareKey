@@ -10,6 +10,7 @@
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <PlatformTarget>x86</PlatformTarget>
     <!--<UseWindowsForms>true</UseWindowsForms>-->
   </PropertyGroup>
 

@@ -11,7 +11,7 @@ namespace Mtf.HardwareKey.Services
         {
             if (status != SentinelStatusCode.Success)
             {
-                throw new InvalidOperationException($"{Path.GetFileName(callerFilePath)} - {callerFunctionName}:{callerFunctionLine}{Environment.NewLine} Returned status code: {(SentinelStatusCode)status}");
+                throw new InvalidOperationException($"{Path.GetFileName(callerFilePath)} - {callerFunctionName}:{callerFunctionLine}{Environment.NewLine}Returned status code: {(SentinelStatusCode)status}");
             }
         }
     }
