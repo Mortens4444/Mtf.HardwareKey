@@ -10,7 +10,7 @@
       - Sentinel SuperPro Harware Key
       
       Compatibility:
-      - .netstandard2.0
+      - .NetStandard 2.0
 	</description>
     <authors>Mortens</authors>
 	<owners>Mortens</owners>

@@ -14,6 +14,12 @@
     <!--<UseWindowsForms>true</UseWindowsForms>-->
   </PropertyGroup>
 
+  <Target Name="SetFileVersionFromNuspec" BeforeTargets="BeforeBuild">
+    <XmlPeek XmlInputPath="../.nuspec" Query="//*[local-name()='version']/text()">
+      <Output TaskParameter="Result" PropertyName="FileVersion" />
+    </XmlPeek>
+  </Target>
+
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net481|AnyCPU'">
     <WarningLevel>9999</WarningLevel>
   </PropertyGroup>
