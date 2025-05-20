@@ -130,11 +130,7 @@ namespace Mtf.HardwareKey
 
         public BitMemoryAddress GetBitMemoryAddress(BitMemoryDataType bitMemoryDataType)
         {
-#if NETSTANDARD
-            return MemoryAddress.HardwareKeyBitMaps[(DeveloperId, bitMemoryDataType)];
-#else
             return MemoryAddress.HardwareKeyBitMaps[new Tuple<HardwareKeyDeveloper, BitMemoryDataType>(DeveloperId, bitMemoryDataType)];
-#endif
         }
     };
 }

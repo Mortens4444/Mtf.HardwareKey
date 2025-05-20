@@ -13,40 +13,40 @@ namespace Mtf.HardwareKey.Models
 
         public const ushort MaxAddress = 255;
 
-        public static Dictionary<(HardwareKeyDeveloper, BitMemoryDataType), BitMemoryAddress> HardwareKeyBitMaps => new Dictionary<(HardwareKeyDeveloper, BitMemoryDataType), BitMemoryAddress>
+        public static Dictionary<Tuple<HardwareKeyDeveloper, BitMemoryDataType>, BitMemoryAddress> HardwareKeyBitMaps => new Dictionary<Tuple<HardwareKeyDeveloper, BitMemoryDataType>, BitMemoryAddress>
         {
-            { (HardwareKeyDeveloper.Test1, BitMemoryDataType.LicenseBit), new BitMemoryAddress(Get(HardwareKeyDeveloper.Test1, MemoryDataType.License), Bit._01) },
+            { new Tuple<HardwareKeyDeveloper, BitMemoryDataType>(HardwareKeyDeveloper.Test1, BitMemoryDataType.LicenseBit), new BitMemoryAddress(Get(HardwareKeyDeveloper.Test1, MemoryDataType.License), Bit._01) },
         };
 
-        private static readonly Dictionary<(HardwareKeyDeveloper, ushort), MemoryDataType> hardwareKeyMaps = new Dictionary<(HardwareKeyDeveloper, ushort), MemoryDataType>
+        private static readonly Dictionary<Tuple<HardwareKeyDeveloper, ushort>, MemoryDataType> hardwareKeyMaps = new Dictionary<Tuple<HardwareKeyDeveloper, ushort>, MemoryDataType>
         {
-            { (HardwareKeyDeveloper.Test1, 0x00), MemoryDataType.SafeNetKeySerialNumber },
-            { (HardwareKeyDeveloper.Test1, 0x01), MemoryDataType.SafeNetDeveloperId },
-            { (HardwareKeyDeveloper.Test1, 0x02), MemoryDataType.SafeNetOverwritePassword1 },
-            { (HardwareKeyDeveloper.Test1, 0x03), MemoryDataType.SafeNetOverwritePassword2 },
-            { (HardwareKeyDeveloper.Test1, 0x04), MemoryDataType.SafeNetWritePassword },
-            { (HardwareKeyDeveloper.Test1, 0x05), MemoryDataType.SafeNetHardLicenseLimit },
-            { (HardwareKeyDeveloper.Test1, 0x06), MemoryDataType.SafeNetC6 },
-            { (HardwareKeyDeveloper.Test1, 0x07), MemoryDataType.SafeNet },
+            { new Tuple<HardwareKeyDeveloper, ushort>(HardwareKeyDeveloper.Test1, 0x00), MemoryDataType.SafeNetKeySerialNumber },
+            { new Tuple<HardwareKeyDeveloper, ushort>(HardwareKeyDeveloper.Test1, 0x01), MemoryDataType.SafeNetDeveloperId },
+            { new Tuple<HardwareKeyDeveloper, ushort>(HardwareKeyDeveloper.Test1, 0x02), MemoryDataType.SafeNetOverwritePassword1 },
+            { new Tuple<HardwareKeyDeveloper, ushort>(HardwareKeyDeveloper.Test1, 0x03), MemoryDataType.SafeNetOverwritePassword2 },
+            { new Tuple<HardwareKeyDeveloper, ushort>(HardwareKeyDeveloper.Test1, 0x04), MemoryDataType.SafeNetWritePassword },
+            { new Tuple<HardwareKeyDeveloper, ushort>(HardwareKeyDeveloper.Test1, 0x05), MemoryDataType.SafeNetHardLicenseLimit },
+            { new Tuple<HardwareKeyDeveloper, ushort>(HardwareKeyDeveloper.Test1, 0x06), MemoryDataType.SafeNetC6 },
+            { new Tuple<HardwareKeyDeveloper, ushort>(HardwareKeyDeveloper.Test1, 0x07), MemoryDataType.SafeNet },
 
-            { (HardwareKeyDeveloper.Test1, 0x0A), MemoryDataType.License },
+            { new Tuple<HardwareKeyDeveloper, ushort>(HardwareKeyDeveloper.Test1, 0x0A), MemoryDataType.License },
 
-            { (HardwareKeyDeveloper.Test1, 0xF0), MemoryDataType.SafeNet },
-            { (HardwareKeyDeveloper.Test1, 0xF1), MemoryDataType.SafeNet },
-            { (HardwareKeyDeveloper.Test1, 0xF2), MemoryDataType.SafeNet },
-            { (HardwareKeyDeveloper.Test1, 0xF3), MemoryDataType.SafeNet },
-            { (HardwareKeyDeveloper.Test1, 0xF4), MemoryDataType.SafeNet },
-            { (HardwareKeyDeveloper.Test1, 0xF5), MemoryDataType.SafeNet },
-            { (HardwareKeyDeveloper.Test1, 0xF6), MemoryDataType.SafeNet },
-            { (HardwareKeyDeveloper.Test1, 0xF7), MemoryDataType.SafeNet },
-            { (HardwareKeyDeveloper.Test1, 0xF8), MemoryDataType.SafeNet },
-            { (HardwareKeyDeveloper.Test1, 0xF9), MemoryDataType.SafeNet },
-            { (HardwareKeyDeveloper.Test1, 0xFA), MemoryDataType.SafeNet },
-            { (HardwareKeyDeveloper.Test1, 0xFB), MemoryDataType.SafeNet },
-            { (HardwareKeyDeveloper.Test1, 0xFC), MemoryDataType.SafeNet },
-            { (HardwareKeyDeveloper.Test1, 0xFD), MemoryDataType.SafeNet },
-            { (HardwareKeyDeveloper.Test1, 0xFE), MemoryDataType.SafeNet },
-            { (HardwareKeyDeveloper.Test1, 0xFF), MemoryDataType.SafeNet }
+            { new Tuple<HardwareKeyDeveloper, ushort>(HardwareKeyDeveloper.Test1, 0xF0), MemoryDataType.SafeNet },
+            { new Tuple<HardwareKeyDeveloper, ushort>(HardwareKeyDeveloper.Test1, 0xF1), MemoryDataType.SafeNet },
+            { new Tuple<HardwareKeyDeveloper, ushort>(HardwareKeyDeveloper.Test1, 0xF2), MemoryDataType.SafeNet },
+            { new Tuple<HardwareKeyDeveloper, ushort>(HardwareKeyDeveloper.Test1, 0xF3), MemoryDataType.SafeNet },
+            { new Tuple<HardwareKeyDeveloper, ushort>(HardwareKeyDeveloper.Test1, 0xF4), MemoryDataType.SafeNet },
+            { new Tuple<HardwareKeyDeveloper, ushort>(HardwareKeyDeveloper.Test1, 0xF5), MemoryDataType.SafeNet },
+            { new Tuple<HardwareKeyDeveloper, ushort>(HardwareKeyDeveloper.Test1, 0xF6), MemoryDataType.SafeNet },
+            { new Tuple<HardwareKeyDeveloper, ushort>(HardwareKeyDeveloper.Test1, 0xF7), MemoryDataType.SafeNet },
+            { new Tuple<HardwareKeyDeveloper, ushort>(HardwareKeyDeveloper.Test1, 0xF8), MemoryDataType.SafeNet },
+            { new Tuple<HardwareKeyDeveloper, ushort>(HardwareKeyDeveloper.Test1, 0xF9), MemoryDataType.SafeNet },
+            { new Tuple<HardwareKeyDeveloper, ushort>(HardwareKeyDeveloper.Test1, 0xFA), MemoryDataType.SafeNet },
+            { new Tuple<HardwareKeyDeveloper, ushort>(HardwareKeyDeveloper.Test1, 0xFB), MemoryDataType.SafeNet },
+            { new Tuple<HardwareKeyDeveloper, ushort>(HardwareKeyDeveloper.Test1, 0xFC), MemoryDataType.SafeNet },
+            { new Tuple<HardwareKeyDeveloper, ushort>(HardwareKeyDeveloper.Test1, 0xFD), MemoryDataType.SafeNet },
+            { new Tuple<HardwareKeyDeveloper, ushort>(HardwareKeyDeveloper.Test1, 0xFE), MemoryDataType.SafeNet },
+            { new Tuple<HardwareKeyDeveloper, ushort>(HardwareKeyDeveloper.Test1, 0xFF), MemoryDataType.SafeNet }
         };
 
         /// <summary>
@@ -109,16 +109,10 @@ namespace Mtf.HardwareKey.Models
         
         public static MemoryDataType GetDataType(HardwareKeyDeveloper hardwareKeyType, ushort address)
         {
-#if NETSTANDARD
-            return address > MaxAddress ? throw new ArgumentOutOfRangeException(nameof(address))
-                : address >= 240 ? MemoryDataType.SafeNet
-                : hardwareKeyMaps.ContainsKey((hardwareKeyType, address)) ? hardwareKeyMaps[(hardwareKeyType, address)] : MemoryDataType.Unknown;
-#else
             return address > MaxAddress ? throw new ArgumentOutOfRangeException(nameof(address))
                 : address >= 240 ? MemoryDataType.SafeNet
                 : hardwareKeyMaps.TryGetValue(Tuple.Create(hardwareKeyType, address), out var dataType) ? dataType
                 : MemoryDataType.Unknown;
-#endif
         }
 
         public static implicit operator MemoryAddress(ushort address)
