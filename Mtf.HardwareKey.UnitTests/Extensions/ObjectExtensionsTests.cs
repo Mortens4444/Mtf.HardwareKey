@@ -1,5 +1,5 @@
+using Mtf.Extensions;
 using Mtf.HardwareKey.Enums;
-using Mtf.HardwareKey.Extensions;
 
 namespace Mtf.HardwareKey.UnitTests.Extensions
 {
@@ -16,8 +16,8 @@ namespace Mtf.HardwareKey.UnitTests.Extensions
         [Test]
         public void GetDescription_ShouldReturnName_ForEnumWithoutDescription()
         {
-            var description = Bit._00_LSB.GetDescription();
-            Assert.That(description, Is.EqualTo("_00_LSB"));
+            var description = Bit._00_MSB.GetDescription();
+            Assert.That(description, Is.EqualTo("_00_MSB"));
         }
 
         [Test]

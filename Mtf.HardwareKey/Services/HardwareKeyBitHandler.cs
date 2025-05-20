@@ -20,11 +20,18 @@ namespace Mtf.HardwareKey.Services
 
             if (toInt < fromInt)
             {
-                (fromInt, toInt) = (toInt, fromInt);
+                fromInt ^= toInt;
+                toInt = fromInt ^ toInt;
+                fromInt ^= toInt;
             }
 
             var mask = (ushort)(((1 << (toInt - fromInt + 1)) - 1) << fromInt);
             return (ushort)(value & mask);
+        }
+
+        public static bool IsBitSet(HardwareKey hardwareKey, BitMemoryDataType bitMemoryDataType)
+        {
+            return IsBitSet(hardwareKey.ApiPacket, hardwareKey.GetBitMemoryAddress(bitMemoryDataType));
         }
 
         public static bool IsBitSet(ulong[] apiPacket, BitMemoryAddress bitMemoryAddress)
@@ -50,6 +57,11 @@ namespace Mtf.HardwareKey.Services
         //    var word = hardwareKey.ReadCellValue(address);
         //    return (word & (int)Math.Pow(2, (byte)bit)) != 0;
         //}
+
+        public static void WriteBit(HardwareKey hardwareKey, BitMemoryDataType bitMemoryDataType, bool bitValue)
+        {
+            WriteBit(hardwareKey.DeveloperId, hardwareKey.ApiPacket, hardwareKey.GetBitMemoryAddress(bitMemoryDataType), bitValue);
+        }
 
         public static void WriteBit(HardwareKeyDeveloper developerId, ulong[] apiPacket, BitMemoryAddress bitMemoryAddress, bool bitValue)
         {

@@ -2,30 +2,42 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Mtf.HardwareKey</id>
-    <version>1.0.8</version>
+    <version>1.0.26</version>
     <description>
-      Sentinel SuperPro Harware Key Helper Library (x86).
-      
-      The library includes various serial devices, such as:
-      - Sentinel SuperPro Harware Key
-      
-      Compatibility:
-      - .NetStandard 2.0
-	</description>
+Sentinel SuperPro Harware Key Helper Library (x86).
+
+The library includes various serial devices, such as:
+- Sentinel SuperPro Harware Key
+
+Compatibility:
+- .NET Framework 4.6.2
+- .NET Standard 2.0
+    </description>
     <authors>Mortens</authors>
-	<owners>Mortens</owners>
+    <owners>Mortens</owners>
     <copyright>Copyright © 2024</copyright>
-	<license type="expression">MIT</license>
-	<projectUrl>https://github.com/Mortens4444/Mtf.HardwareKey</projectUrl>
-    <repository type="git" url="https://github.com/Mortens4444/Mtf.HardwareKey.git" branch="main" commit="ad7dd48a050b4aa75ed7fffd51880f4323d2a7c3" />
-	<tags>Sentinel SuperPro Harware Key Mortens</tags>
-	<readme>docs\ReadMe.md</readme>
+    <license type="expression">MIT</license>
+    <projectUrl>https://github.com/Mortens4444/Mtf.HardwareKey</projectUrl>
+    <repository type="git" url="https://github.com/Mortens4444/Mtf.HardwareKey.git" branch="main" />
+    <tags>Sentinel SuperPro Harware Key Mortens</tags>
+    <readme>docs\ReadMe.md</readme>
     <dependencies>
-      <group targetFramework="netstandard2.0" />
+      <group targetFramework="net462">
+		<dependency id="Mtf.Extensions" version="1.0.0" />
+      </group>
+      <group targetFramework="netstandard2.0">
+		<dependency id="Mtf.Extensions" version="1.0.0" />
+      </group>
     </dependencies>
   </metadata>
   <files>
-    <file src=".\Mtf.HardwareKey\bin\Release\netstandard2.0\**" target="lib\netstandard2.0" />
-	<file src=".\ReadMe.md" target="docs\" />
+    <file src=".\Mtf.HardwareKey\bin\Release\net462\**" target="lib\net462" exclude= ".\Mtf.HardwareKey\bin\Release\net462\sx32w.dll" />
+    <file src=".\Mtf.HardwareKey\bin\Release\netstandard2.0\**" target="lib\netstandard2.0" exclude=".\Mtf.HardwareKey\bin\Release\netstandard2.0\sx32w.dll" />
+
+	<file src=".\Mtf.HardwareKey\bin\Release\netstandard2.0\sx32w.dll" target="tools\" />
+	<!--file src=".\Mtf.HardwareKey\bin\Release\netstandard2.0\sx32w.dll" target="runtimes\win-x64\native\sx32w.dll" /-->
+    <!--file src=".\Mtf.HardwareKey\bin\Release\netstandard2.0\sx32w.dll" target="contentFiles\any\any\" /-->
+
+    <file src=".\ReadMe.md" target="docs\" />
   </files>
 </package>

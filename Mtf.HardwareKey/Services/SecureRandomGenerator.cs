@@ -9,7 +9,9 @@ namespace Mtf.HardwareKey.Services
         {
             if (maxValue < minValue)
             {
-                (minValue, maxValue) = (maxValue, minValue);
+                minValue ^= maxValue;
+                maxValue = minValue ^ maxValue;
+                minValue ^= maxValue;
             }
             var range = maxValue - minValue;
 

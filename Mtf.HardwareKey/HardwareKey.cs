@@ -57,6 +57,12 @@ namespace Mtf.HardwareKey
 
         protected virtual void ReleaseManagedResources() { }
 
+        public ushort ReadCellValue(MemoryDataType memoryDataType)
+        {
+            var memoryAddress = GetMemoryAddressStoredValue(memoryDataType);
+            return ReadCellValue(memoryAddress);
+        }
+
         public ushort ReadCellValue(MemoryAddress address)
         {
             _ = SentinelAPI.Read(ApiPacket, address, out var result);
@@ -122,9 +128,13 @@ namespace Mtf.HardwareKey
             return MemoryAddress.Get(DeveloperId, memoryDataType);
         }
 
-        protected BitMemoryAddress GetBitMemoryAddress(BitMemoryDataType bitMemoryDataType)
+        public BitMemoryAddress GetBitMemoryAddress(BitMemoryDataType bitMemoryDataType)
         {
+#if NETSTANDARD
             return MemoryAddress.HardwareKeyBitMaps[(DeveloperId, bitMemoryDataType)];
+#else
+            return MemoryAddress.HardwareKeyBitMaps[new Tuple<HardwareKeyDeveloper, BitMemoryDataType>(DeveloperId, bitMemoryDataType)];
+#endif
         }
     };
 }

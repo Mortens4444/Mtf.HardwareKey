@@ -106,12 +106,19 @@ namespace Mtf.HardwareKey.Models
             this.description = description;
             Values.Add(address, this);
         }
-
+        
         public static MemoryDataType GetDataType(HardwareKeyDeveloper hardwareKeyType, ushort address)
         {
+#if NETSTANDARD
             return address > MaxAddress ? throw new ArgumentOutOfRangeException(nameof(address))
                 : address >= 240 ? MemoryDataType.SafeNet
                 : hardwareKeyMaps.ContainsKey((hardwareKeyType, address)) ? hardwareKeyMaps[(hardwareKeyType, address)] : MemoryDataType.Unknown;
+#else
+            return address > MaxAddress ? throw new ArgumentOutOfRangeException(nameof(address))
+                : address >= 240 ? MemoryDataType.SafeNet
+                : hardwareKeyMaps.TryGetValue(Tuple.Create(hardwareKeyType, address), out var dataType) ? dataType
+                : MemoryDataType.Unknown;
+#endif
         }
 
         public static implicit operator MemoryAddress(ushort address)
